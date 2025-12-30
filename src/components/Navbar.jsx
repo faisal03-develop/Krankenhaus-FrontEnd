@@ -35,9 +35,9 @@ const Navbar = () => {
             <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               About Us
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <a href="#contactus" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Contact
-            </Link>
+            </a>
           </div>
 
           {/* Auth Buttons */}
@@ -98,13 +98,13 @@ const Navbar = () => {
               >
                 About Us
               </Link>
-              <Link 
-                to="/contact" 
+              <a 
+                href="#contactus" 
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
-              </Link>
+              </a>
               <div className="border-t border-gray-200 pt-2">
                 <Link 
                   to="/login" 
