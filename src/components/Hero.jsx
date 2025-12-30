@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <section className="bg-gradient-to-br from-blue-50 via-white to-indigo-100 mt-12 md:mt-16 w-screen min-h-screen flex items-center px-2 sm:px-4 lg:px-8 overflow-x-hidden">
+    <section className="bg-gradient-to-br from-blue-50 via-white to-indigo-100 mt-12 md:mt-16 px-2 sm:px-4 lg:px-8">
       <div className="max-w-7xl mx-auto w-full py-8 md:py-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16">
           {/* Left Content */}
@@ -28,7 +28,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
               <Link 
                 to="/appointment" 
-                className="group bg-blue-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm md:text-base"
+                className="group bg-blue-600 text-white px-6 py-3 md:px-8 md:py-4 md:ml-20 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <span className='text-white'>Book Appointment</span>
                 <svg className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="white" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ const Hero = () => {
               <img 
                 src="/hero.png" 
                 alt="Healthcare Professional" 
-                className="w-64 sm:w-80 md:w-96 h-auto rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                className="max-w-full h-auto rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500"
               />
             </div>
             

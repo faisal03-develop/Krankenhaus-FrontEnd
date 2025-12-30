@@ -6,10 +6,6 @@ html {
   overflow-x: hidden;
 }
 
-body {
-  overflow-x: hidden;
-}
-
 /* Hide scrollbar for webkit browsers */
 ::-webkit-scrollbar {
   width: 0px;
