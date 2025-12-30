@@ -88,7 +88,7 @@ const Departments = () => {
             "tablet",
             "mobile",
           ]}
-          className="pb-4"
+          className="pb-4 relative z-10"
         >
           {departmentsArray.map((depart, index) => {
             return (
