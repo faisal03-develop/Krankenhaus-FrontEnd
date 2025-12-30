@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Biography = () => {
+const BioGraphy = () => {
   return (
-    <div>Biography</div>
+    <div>BioGraphy</div>
   )
 }
 
-export default Biography
+export default BioGraphy

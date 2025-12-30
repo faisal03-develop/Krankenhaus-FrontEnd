@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { useState } from 'react'
-
+import React from 'react'
 
 export const Context = createContext({isAuthenticated: false});
 

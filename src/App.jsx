@@ -1,24 +1,29 @@
-import React from 'react'
+
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Appointment from './pages/Appointment'
 import Register from './pages/Register'
 import About from './pages/About'
 import Login from './pages/Login'
-import ToastContainer from 'react-toastify'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 const App = () => {
   return (
     <>
       <Router>
-        <Routes>
-          <Route path='/home' element={<Home />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/appointment' element={<Appointment />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/login' element={<Login />} />
-        </Routes>
-        <ToastContainer position='top-center' />
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/home' element={<Home />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/appointment' element={<Appointment />} />
+            <Route path='/about' element={<About />} />
+            <Route path='/login' element={<Login />} />
+          </Routes>
+        </main>
+        <Footer />
       </Router>
     </>
   )

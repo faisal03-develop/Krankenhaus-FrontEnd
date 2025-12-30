@@ -6,7 +6,6 @@ import MessageForm from '../components/MessageForm'
 const Home = () => {
   return (
     <>
-        <div>Home</div>
         <Hero />
         <Biography />
         <Departments />
