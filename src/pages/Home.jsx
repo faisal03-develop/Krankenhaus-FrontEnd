@@ -1,7 +1,6 @@
 import Biography from '../components/BioGraphy'
 import Hero from '../components/Hero'
 import Departments from '../components/Departments'
-import MessageForm from '../components/MessageForm'
 
 const Home = () => {
   return (
@@ -9,7 +8,6 @@ const Home = () => {
         <Hero />
         <Biography />
         <Departments />
-        <MessageForm />
     </>
   )
 }

@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx'
 import Appointment from './pages/Appointment'
 import Register from './pages/Register'
 import About from './pages/About'
+import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -21,6 +22,7 @@ const App = () => {
             <Route path='/register' element={<Register />} />
             <Route path='/appointment' element={<Appointment />} />
             <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login />} />
           </Routes>
         </main>
