@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../main';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     role: ''
   });
+
+  const navigateTo = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -15,10 +23,37 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', formData);
+    
+    try{
+      await axios.post('http://localhost:8000/api/v1/user/login', {
+        email: formData.email,
+        password: formData.password,
+        role: formData.role
+      },{ withCredentials: true, headers: { 'Content-Type': 'application/json' } })
+      .then((res)=>{
+        console.log(res.data);
+        setIsAuthenticated(true);
+        setUser(res.data.user);
+        setFormData({
+          email: '',
+          password: '',
+          role: ''
+        });
+      });
+    }
+    catch(error){
+         toast.error(error.response.data.message);
+      
+    }
   };
+    useEffect(() => {
+      if (isAuthenticated) {
+        navigateTo("/");
+      }
+    }, [isAuthenticated, navigateTo]);
+    
 
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
@@ -89,7 +124,7 @@ const Login = () => {
               type="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              <span className='text-blue-600'>Sign In </span>
+              <span className='text-white'>Sign In</span>
             </button>
           </form>
 

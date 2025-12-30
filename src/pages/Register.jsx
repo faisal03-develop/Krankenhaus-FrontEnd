@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../main';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+  const { setIsAuthenticated, setUser } = useContext(Context);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,6 +20,12 @@ const Register = () => {
     role: 'patient'
   });
 
+  const [isAuthenticated, setIsAuthenticatedLocal] = useState(false);
+  const navigateTo = useNavigate();
+
+
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,10 +34,34 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleRegistration = async (e) => {
     e.preventDefault();
-    console.log('Registration attempt:', formData);
+    try{
+      await axios.post("http://localhost:8000/api/v1/user/register",
+        {...formData} ,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      ).then((res) => {
+        console.log(res.data);
+        setIsAuthenticated(true);
+        setUser(res.data.user);
+        setIsAuthenticatedLocal(true);
+      });
+    }
+    catch (error) {
+      console.error("Registration error:", error);
+    }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigateTo("/");
+    }
+  }, [isAuthenticated, navigateTo]);
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 pt-20">
@@ -44,7 +79,7 @@ const Register = () => {
 
         {/* Registration Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleRegistration} className="space-y-6">
             {/* Personal Information */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
@@ -137,7 +172,7 @@ const Register = () => {
                     Gender *
                   </label>
                   <div className="flex flex-wrap gap-4">
-                    {['Male', 'Female', 'Other'].map((gender) => (
+                    {['male', 'female', 'other'].map((gender) => (
                       <label key={gender} className="flex items-center">
                         <input
                           type="radio"
@@ -181,7 +216,7 @@ const Register = () => {
                   <input
                     type="password"
                     name="confirmPassword"
-                    value={formData.confirmPassword}
+                    value={formData.confirmPassword || ''}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Confirm your password"
@@ -195,7 +230,7 @@ const Register = () => {
               type="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              Create Account
+              <span className='text-blue-600'>Create Account </span>
             </button>
           </form>
 

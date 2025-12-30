@@ -7,6 +7,7 @@ import About from './pages/About'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+ import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           </Routes>
         </main>
         <Footer />
+        <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
       </Router>
     </>
   )

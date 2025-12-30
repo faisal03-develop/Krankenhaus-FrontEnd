@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../main';
+import axios from 'axios';
 
 const Navbar = () => {
+  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    axios.get('http://localhost:8000/api/v1/user/logout', { withCredentials: true })
+      .then((res) => {
+        console.log(res.data.message);
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUser({});
+      })
+      .catch((error) => {
+        console.error('Logout failed:', error);
+      });
   };
 
   return (
@@ -42,18 +58,29 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link 
-              to="/login" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Login
-            </Link>
-            <Link 
-              to="/register" 
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              <span className='text-white'>Register </span>
-            </Link>
+            {isAuthenticated ? (
+              <button 
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
+                  <span className='text-white'>Register </span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -106,20 +133,34 @@ const Navbar = () => {
                 Contact
               </a>
               <div className="border-t border-gray-200 pt-2">
-                <Link 
-                  to="/login" 
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="block px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md font-medium mx-3 mt-2 text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Register
-                </Link>
+                {isAuthenticated ? (
+                  <button 
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="block px-3 py-2 bg-red-600 text-white hover:bg-red-700 rounded-md font-medium mx-3 mt-2 text-center w-full"
+                  >
+                    <span className='text-red-600'> Logout</span>
+                  </button>
+                ) : (
+                  <>
+                    <Link 
+                      to="/login" 
+                      className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link 
+                      to="/register" 
+                      className="block px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md font-medium mx-3 mt-2 text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

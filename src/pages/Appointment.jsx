@@ -1,16 +1,14 @@
-import React from 'react';
+
 import AppointmentForm from '../components/AppointmentForm';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 
 const Appointment = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 to-indigo-700 pt-20 pb-16 px-4">
-        <div className="max-w-4xl mx-auto text-center text-white">
+      <section className="bg-gradient-to-br from-blue-600 to-indigo-700 pb-16 px-4">
+        <div className="max-w-4xl mx-auto text-center text-white pt-30">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Book Your Appointment
           </h1>
@@ -72,8 +70,7 @@ const Appointment = () => {
           </div>
         </div>
       </section>
-      
-      <Footer />
+
     </div>
   );
 };

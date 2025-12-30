@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const MessageForm = () => {
   const [formData, setFormData] = useState({
@@ -16,10 +18,36 @@ const MessageForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    try{
+      axios.post('http://localhost:8000/api/v1/message/send', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+      toast.success('Message sent successfully!');
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+    }
   };
 
   return (
@@ -40,7 +68,7 @@ const MessageForm = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSend} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

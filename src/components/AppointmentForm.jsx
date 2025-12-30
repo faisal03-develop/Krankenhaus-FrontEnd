@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useContext, useEffect } from 'react';
+import { Context } from '../main';
 
 const AppointmentForm = () => {
+  const { isAuthenticated, user } = useContext(Context);
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,6 +20,21 @@ const AppointmentForm = () => {
     address: '',
     hasVisited: false
   });
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        nic: user.nic || '',
+        dob: user.dob ? user.dob.split('T')[0] : '',
+        gender: user.gender || ''
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,7 +79,12 @@ const AppointmentForm = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     placeholder="Enter your first name"
                     required
                   />
@@ -74,7 +98,12 @@ const AppointmentForm = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     placeholder="Enter your last name"
                     required
                   />
@@ -88,7 +117,12 @@ const AppointmentForm = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     placeholder="Enter your email"
                     required
                   />
@@ -102,7 +136,12 @@ const AppointmentForm = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     placeholder="Enter your phone number"
                     required
                   />
@@ -116,7 +155,12 @@ const AppointmentForm = () => {
                     name="nic"
                     value={formData.nic}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     placeholder="Enter your NIC number"
                     required
                   />
@@ -130,7 +174,12 @@ const AppointmentForm = () => {
                     name="dob"
                     value={formData.dob}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    readOnly={isAuthenticated}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
+                      isAuthenticated 
+                        ? 'border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed' 
+                        : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    }`}
                     required
                   />
                 </div>
@@ -147,10 +196,17 @@ const AppointmentForm = () => {
                           value={gender}
                           checked={formData.gender === gender}
                           onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          disabled={isAuthenticated}
+                          className={`w-4 h-4 text-blue-600 border-gray-300 ${
+                            isAuthenticated 
+                              ? 'cursor-not-allowed opacity-60' 
+                              : 'focus:ring-blue-500'
+                          }`}
                           required
                         />
-                        <span className="ml-2 text-sm md:text-base text-gray-700">{gender}</span>
+                        <span className={`ml-2 text-sm md:text-base ${
+                          isAuthenticated ? 'text-gray-500' : 'text-gray-700'
+                        }`}>{gender}</span>
                       </label>
                     ))}
                   </div>
@@ -266,8 +322,8 @@ const AppointmentForm = () => {
                 type="submit"
                 className="w-full bg-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm md:text-base"
               >
-                <span className='text-blue-600'>Book Appointment </span>
-                <svg className="w-5 h-5" fill="none" stroke="blue" viewBox="0 0 24 24">
+                <span className='text-white'>Book Appointment </span>
+                <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </button>
