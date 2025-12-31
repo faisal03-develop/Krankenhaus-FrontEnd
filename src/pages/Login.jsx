@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const {user} =useContext(Context);
   const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
 
   const [formData, setFormData] = useState({
@@ -49,7 +50,10 @@ const Login = () => {
     }
   };
     useEffect(() => {
-      if (isAuthenticated) {
+      if (isAuthenticated && user?.role === 'doctor') {
+        navigateTo("/doctor/dashboard");
+      }
+      if( isAuthenticated && user?.role === 'patient') {
         navigateTo("/patient/dashboard");
       }
     }, [isAuthenticated, navigateTo]);

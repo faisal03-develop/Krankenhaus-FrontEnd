@@ -4,6 +4,7 @@ import { Context } from '../main';
 import axios from 'axios';
 
 const Navbar = () => {
+  const {user} =useContext(Context);
   const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -12,7 +13,20 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    axios.get('http://localhost:8000/api/v1/user/logout', { withCredentials: true })
+    if(user?.role === 'doctor') {
+      axios.get('http://localhost:8000/api/v1/user/doctor/logout', { withCredentials: true })
+      .then((res) => {
+        console.log(res.data.message);
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUser({});
+      })
+      .catch((error) => {
+        console.error('Logout failed:', error);
+      });
+      return;
+    }
+    axios.get('http://localhost:8000/api/v1/user/user/logout', { withCredentials: true })
       .then((res) => {
         console.log(res.data.message);
     localStorage.removeItem('token');
@@ -23,6 +37,7 @@ const Navbar = () => {
         console.error('Logout failed:', error);
       });
   };
+  
 
   return (
     <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
@@ -42,11 +57,17 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {isAuthenticated ? (
+            {isAuthenticated &&  user?.role === 'doctor' ? (
+              <Link to="/doctor/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Dashboard
+            </Link>
+            ) : null}
+            {isAuthenticated &&  user?.role === 'patient' ? (
               <Link to="/patient/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Dashboard
             </Link>
             ) : null}
+            
             <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Home
             </Link>

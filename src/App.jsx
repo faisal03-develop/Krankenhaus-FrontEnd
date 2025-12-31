@@ -11,6 +11,7 @@ import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
+import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
 
 const App = () => {
   return (
@@ -31,6 +32,12 @@ const App = () => {
                 <PatientDashboard />
               </ProtectedRoute>
             } />
+            <Route path='/doctor/dashboard' element={
+              <ProtectedRoute>
+                <DoctorDashboard />
+              </ProtectedRoute>
+            }
+            />
           </Routes>
         </main>
         <Footer />
