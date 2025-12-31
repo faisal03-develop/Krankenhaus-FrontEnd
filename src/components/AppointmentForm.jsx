@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../main';
+import { toast } from 'react-toastify';
 
 const AppointmentForm = () => {
   const { isAuthenticated, user } = useContext(Context);
@@ -13,28 +14,30 @@ const AppointmentForm = () => {
     nic: '',
     dob: '',
     gender: '',
-    appointmentDate: '',
+    a_date: '',
     department: '',
-    doctorFirstName: '',
-    doctorLastName: '',
+    doctor_firstName: '',
+    doctor_lastName: '',
     address: '',
     hasVisited: false
   });
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      setFormData(prev => ({
-        ...prev,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        nic: user.nic || '',
-        dob: user.dob ? user.dob.split('T')[0] : '',
-        gender: user.gender || ''
-      }));
-    }
-  }, [isAuthenticated, user]);
+  if (!isAuthenticated || !user) return;
+
+  setFormData(prev => ({
+    ...prev,
+    firstName: user.firstName ?? '',
+    lastName: user.lastName ?? '',
+    email: user.email ?? '',
+    phone: user.phone ?? '',
+    nic: user.nic ?? '',
+    dob: user.dob ? user.dob.slice(0, 10) : '',
+    gender: user.gender ?? '',
+    hasVisited: user.hasVisited ?? false
+  }));
+}, [isAuthenticated]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -44,9 +47,34 @@ const AppointmentForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Appointment booked:', formData);
+    try{
+      await axios.post('http://localhost:8000/api/v1/appointment/bookappointment', 
+        {...formData},
+      {withCredentials:true, headers: { "Content-Type": "application/json"}});
+      toast.success("Appointment booked successfully");
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        nic: '',
+        dob: '',
+        gender: '',
+        a_date: '',
+        department: '',
+        doctor_firstName: '',
+        doctor_lastName: '',
+        address: '',
+        hasVisited: false
+      }); 
+    }
+    catch(error){
+      console.log(formData);
+      toast.error(error.response.data.message);
+      console.error('Error booking appointment:', error);
+    }
   };
 
   return (
@@ -224,8 +252,8 @@ const AppointmentForm = () => {
                   </label>
                   <input
                     type="date"
-                    name="appointmentDate"
-                    value={formData.appointmentDate}
+                    name="a_date"
+                    value={formData.a_date}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
                     required
@@ -258,8 +286,8 @@ const AppointmentForm = () => {
                   </label>
                   <input
                     type="text"
-                    name="doctorFirstName"
-                    value={formData.doctorFirstName}
+                    name="doctor_firstName"
+                    value={formData.doctor_firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
                     placeholder="Doctor's first name"
@@ -272,8 +300,8 @@ const AppointmentForm = () => {
                   </label>
                   <input
                     type="text"
-                    name="doctorLastName"
-                    value={formData.doctorLastName}
+                    name="doctor_lastName"
+                    value={formData.doctor_lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
                     placeholder="Doctor's last name"

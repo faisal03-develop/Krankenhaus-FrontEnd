@@ -4,8 +4,7 @@ import { Context } from '../main';
 import axios from 'axios';
 
 const Navbar = () => {
-  const {user} =useContext(Context);
-  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
+  const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -62,24 +61,34 @@ const Navbar = () => {
                 Dashboard
             </Link>
             ) : null}
-            {isAuthenticated &&  user?.role === 'patient' ? (
+            {isAuthenticated &&  user?.role == 'patient' ? (
               <Link to="/patient/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Dashboard
             </Link>
             ) : null}
-            
-            <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Home
-            </Link>
-            <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Appointment
-            </Link>
-            <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              About Us
-            </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Contact
-            </Link>
+            {isAuthenticated &&  user?.role === 'patient' ? (
+                <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Home
+                </Link>
+            ) : null}
+
+            {isAuthenticated &&  user?.role === 'patient' ? (
+              <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Appointment
+              </Link>
+            ) : null}
+
+            {isAuthenticated &&  user?.role === 'patient' ? (
+              <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                About Us
+              </Link>
+            ) : null}
+            {isAuthenticated &&  user?.role === 'patient' ? (
+              <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Contact
+              </Link>
+            ) : null}
+
           </div>
 
           {/* Auth Buttons */}

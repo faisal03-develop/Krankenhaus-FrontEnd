@@ -12,8 +12,42 @@ import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
+import { useEffect } from 'react'
+import axios from 'axios'
+import { useContext } from 'react'
+import { Context } from '../src/main.jsx'
+
 
 const App = () => {
+
+  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
+
+useEffect(() => {
+
+
+    const fetchUser = () =>{
+        axios
+      .get("http://localhost:8000/api/v1/user/me", { withCredentials: true })
+      .then((res) => {
+        if (res?.data?.user) {
+          // console.log(`res data user`, res.data.user);
+          setIsAuthenticated(true);
+          setUser(res.data.user);
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+        setUser(null);
+      });
+    };
+    fetchUser();
+
+}, [isAuthenticated]);
+
+
   return (
     <>
       <Router>
@@ -23,7 +57,11 @@ const App = () => {
             <Route path='/' element={<Home />} />
             <Route path='/home' element={<Home />} />
             <Route path='/register' element={<Register />} />
-            <Route path='/appointment' element={<Appointment />} />
+            <Route path='/appointment' element={
+              <ProtectedRoute>
+                <Appointment />
+              </ProtectedRoute>
+            } />
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login />} />
