@@ -42,6 +42,11 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+            {isAuthenticated ? (
+              <Link to="/patient/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Dashboard
+            </Link>
+            ) : null}
             <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Home
             </Link>

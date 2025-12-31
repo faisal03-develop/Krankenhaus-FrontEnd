@@ -57,7 +57,7 @@ const Register = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigateTo("/");
+      navigateTo("/patient/dashboard");
     }
   }, [isAuthenticated, navigateTo]);
   

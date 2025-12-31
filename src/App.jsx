@@ -8,7 +8,9 @@ import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
- import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import PatientDashboard from './pages/patient/PatientDashboard.jsx'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
   return (
@@ -24,6 +26,11 @@ const App = () => {
             <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/patient/dashboard' element={
+              <ProtectedRoute>
+                <PatientDashboard />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
         <Footer />

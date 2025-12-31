@@ -50,7 +50,7 @@ const Login = () => {
   };
     useEffect(() => {
       if (isAuthenticated) {
-        navigateTo("/");
+        navigateTo("/patient/dashboard");
       }
     }, [isAuthenticated, navigateTo]);
     
