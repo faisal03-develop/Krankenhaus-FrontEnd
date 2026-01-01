@@ -14,15 +14,15 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    // fetchDashboardData();
+    fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
     try {
       // Fetch users, appointments, and other data
       // This is a placeholder - adjust API endpoints as needed
-      const usersRes = await axios.get('http://localhost:8000/api/v1/user/all', { withCredentials: true });
-      const appointmentsRes = await axios.get('http://localhost:8000/api/v1/appointment/all', { withCredentials: true });
+      const usersRes = await axios.get('http://localhost:8000/api/v1/user/getallusers', { withCredentials: true });
+      const appointmentsRes = await axios.get('http://localhost:8000/api/v1/appointment/getallappointments', { withCredentials: true });
       
       if (usersRes.data.users) {
         setUsers(usersRes.data.users);
@@ -44,6 +44,21 @@ const AdminDashboard = () => {
       console.error('Error fetching dashboard data:', error);
     }
   };
+
+
+  const handleUpdateStatus = async (appointmentId) => {
+    try{
+      // Implement status update logic here // Replace with actual appointment ID
+      await axios.put(`http://localhost:8000/api/v1/appointment/updateappointment/${appointmentId}`,
+        {status: 'accepted'},
+        { withCredentials: true }
+      )
+      toast.success('Status updated successfully');
+    }
+    catch(error){
+      toast.error(`Error updating status ${error.response.data.message}`);
+    }
+  }
 
   const handleLogout = () => {
     axios.get('http://localhost:8000/api/v1/user/admin/logout', { withCredentials: true })
@@ -105,11 +120,14 @@ const AdminDashboard = () => {
           {appointment.status}
         </span>
       </td>
+      <td>
+        <button onClick={() => handleUpdateStatus(appointment._id)} className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-2">Update Status</button>
+      </td>
     </tr>
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-20">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,6 +258,7 @@ const AdminDashboard = () => {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">

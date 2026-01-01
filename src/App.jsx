@@ -81,7 +81,7 @@ useEffect(() => {
             <Route path='/admin/dashboard' element={
               // <AdminProtectedRoute>
                 <AdminDashboard />
-            /* </AdminProtectedRoute> */
+            //</AdminProtectedRoute> 
           }
             />
           </Routes>
