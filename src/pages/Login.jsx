@@ -50,12 +50,16 @@ const Login = () => {
     }
   };
     useEffect(() => {
-      if (isAuthenticated && user?.role === 'doctor') {
-        navigateTo("/doctor/dashboard");
-      }
       if( isAuthenticated && user?.role === 'patient') {
         navigateTo("/patient/dashboard");
       }
+      if(isAuthenticated && user?.role === 'admin') {
+        navigateTo("/admin/dashboard");
+      }
+      else if (isAuthenticated && user?.role === 'doctor') {
+        navigateTo("/doctor/dashboard");
+      }
+      
     }, [isAuthenticated, navigateTo]);
     
 

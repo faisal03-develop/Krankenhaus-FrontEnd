@@ -11,7 +11,9 @@ import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminProtectedRoute from './components/AdminProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
+import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import { useEffect } from 'react'
 import axios from 'axios'
 import { useContext } from 'react'
@@ -20,7 +22,7 @@ import { Context } from '../src/main.jsx'
 
 const App = () => {
 
-  const { isAuthenticated, setIsAuthenticated, setUser } = useContext(Context);
+  const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
 
 useEffect(() => {
 
@@ -51,7 +53,7 @@ useEffect(() => {
   return (
     <>
       <Router>
-        <Navbar />
+        {user?.role !== 'admin' && <Navbar />}
         <main>
           <Routes>
             <Route path='/' element={<Home />} />
@@ -75,6 +77,12 @@ useEffect(() => {
                 <DoctorDashboard />
               </ProtectedRoute>
             }
+            />
+            <Route path='/admin/dashboard' element={
+              // <AdminProtectedRoute>
+                <AdminDashboard />
+            /* </AdminProtectedRoute> */
+          }
             />
           </Routes>
         </main>

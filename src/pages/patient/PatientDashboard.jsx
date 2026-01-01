@@ -1,8 +1,49 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../main';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const PatientDashboard = () => {
-  const { user } = useContext(Context);
+  const { user, isAuthenticated } = useContext(Context);
+
+  const [appointments, setAppointments] = useState({
+        firstName:"",
+        lastName:"",
+        phone : "",
+        email: "",
+        nic: "",
+        dob: "",
+        gender: "",
+        doctor: {
+            firstName: "",
+            lastName: "",
+        },
+        a_date: "",
+        department: "",
+        doctorId: "",
+        patientId: "",
+        hasVisited: "",
+        address: "",
+});
+
+useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
+        withCredentials: true 
+      });
+      const data = response.data;
+      // setAppointments(data);
+      console.log(data.appointments)
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response?.data?.message || 'Failed to fetch appointments');
+    }
+  };
+  fetchPosts();
+}
+, [isAuthenticated]);
+
 
   const upcomingAppointments = [
     { id: 1, doctor: 'Dr. Sarah Johnson', department: 'Cardiology', date: '2024-01-15', time: '10:00 AM', status: 'Confirmed' },
