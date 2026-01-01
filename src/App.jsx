@@ -11,7 +11,6 @@ import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
-import AdminProtectedRoute from './components/AdminProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import { useEffect } from 'react'
@@ -60,7 +59,7 @@ useEffect(() => {
             <Route path='/home' element={<Home />} />
             <Route path='/register' element={<Register />} />
             <Route path='/appointment' element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="patient">
                 <Appointment />
               </ProtectedRoute>
             } />
@@ -68,22 +67,25 @@ useEffect(() => {
             <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login />} />
             <Route path='/patient/dashboard' element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="patient">
                 <PatientDashboard />
               </ProtectedRoute>
             } />
             <Route path='/doctor/dashboard' element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="doctor">
                 <DoctorDashboard />
               </ProtectedRoute>
             }
             />
-            <Route path='/admin/dashboard' element={
-              // <AdminProtectedRoute>
-                <AdminDashboard />
-            //</AdminProtectedRoute> 
-          }
-            />
+            <Route
+                path='/admin/dashboard'
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
           </Routes>
         </main>
         <Footer />
