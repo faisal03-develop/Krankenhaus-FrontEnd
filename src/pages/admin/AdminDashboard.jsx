@@ -129,7 +129,7 @@ const AdminDashboard = () => {
       <td className="px-4 py-3">{appointment.firstName} {appointment.lastName}</td>
       <td className="px-4 py-3">{appointment.email}</td>
       <td className="px-4 py-3">{appointment.department}</td>
-      <td className="px-4 py-3">{new Date(appointment.appointment_date).toLocaleDateString()}</td>
+      <td className="px-4 py-3">{new Date(appointment.a_date).toLocaleDateString()}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
           appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
