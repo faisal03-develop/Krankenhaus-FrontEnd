@@ -66,24 +66,24 @@ const Navbar = () => {
                 Dashboard
             </Link>
             ) : null}
-            {user?.role !== 'admin' ? (
+            {user?.role !== 'admin' && user?.role !== 'doctor' ? (
                 <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                   Home
                 </Link>
             ) : null}
 
-            {isAuthenticated &&  user?.role !== 'admin' ? (
+            {isAuthenticated &&  user?.role !== 'admin' && user?.role !== 'doctor' ? (
               <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Appointment
               </Link>
             ) : null}
 
-            {user?.role !== 'admin' ? (
+            {user?.role !== 'admin' && user?.role !== 'doctor' ? (
               <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 About Us
               </Link>
             ) : null}
-            {user?.role !== 'admin' ? (
+            {user?.role !== 'admin' && user?.role !== 'doctor' ? (
               <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Contact
               </Link>

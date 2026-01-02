@@ -1,9 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Context } from '../../main';
+import { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+
 
 const DoctorDashboard = () => {
   const { user } = useContext(Context);
 
+  const [appointments, setAppointments] = useState([]);
+
+
+  const fetchAppointments = async () => {
+    try{
+      const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
+        { withCredentials: true }
+      );
+      console.log(response.data.appointments);
+      setAppointments(response.data.appointments);
+      // console.log(appointments);
+    }
+    catch(error){
+      console.log(error);
+      toast.error("Error fetching appointments");
+    }
+
+  }
+  useEffect(() => {
+    fetchAppointments();
+  },[]);
+  
   const todayAppointments = [
     { id: 1, patient: 'John Smith', time: '09:00 AM', type: 'Consultation', status: 'Confirmed' },
     { id: 2, patient: 'Sarah Johnson', time: '10:30 AM', type: 'Follow-up', status: 'In Progress' },
@@ -27,9 +54,14 @@ const DoctorDashboard = () => {
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 flex flex-row justify-between">
+          <div>
           <h1 className="text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
           <p className="text-gray-600 mt-2">Welcome back, Dr. {user?.firstName || 'Doctor'}!</p>
+          </div>
+          <div>
+            <img src={user?.docAvatar.url} className='h-20 w-20' alt="DocAvatar" />
+          </div>
         </div>
 
         {/* Stats Cards */}
