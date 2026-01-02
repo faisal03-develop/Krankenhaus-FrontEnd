@@ -32,8 +32,8 @@ const AdminDashboard = () => {
       
       if (usersRes.data.users) {
         setUsers(usersRes.data.users);
-        const doctors = usersRes.data.users.filter(user => user.role === 'Doctor');
-        const patients = usersRes.data.users.filter(user => user.role === 'Patient');
+        const doctors = usersRes.data.users.filter(user => user.role === 'doctor');
+        const patients = usersRes.data.users.filter(user => user.role === 'patient');
         
         setStats({
           totalUsers: usersRes.data.users.length,
