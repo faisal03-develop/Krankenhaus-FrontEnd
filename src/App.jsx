@@ -13,6 +13,7 @@ import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
+import AddNewDoctor from './pages/admin/addNewDoctor.jsx'
 import { useEffect } from 'react'
 import axios from 'axios'
 import { useContext } from 'react'
@@ -82,6 +83,14 @@ useEffect(() => {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+            <Route
+                path='/admin/addnew'
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AddNewDoctor />
                   </ProtectedRoute>
                 }
               />
