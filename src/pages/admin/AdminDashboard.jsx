@@ -103,25 +103,25 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const UserRow = ({ user }) => (
+  const DoctorRow = ({ doctor }) => (
     <tr className="border-b hover:bg-gray-50">
-      <td className="px-4 py-3">{user.firstName} {user.lastName}</td>
-      <td className="px-4 py-3">{user.email}</td>
+      <td className="px-4 py-3">{doctor.firstName} {doctor.lastName}</td>
+      <td className="px-4 py-3">{doctor.email}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          user.role === 'Doctor' ? 'bg-blue-100 text-blue-800' :
-          user.role === 'Patient' ? 'bg-green-100 text-green-800' :
+          doctor.role === 'Doctor' ? 'bg-blue-100 text-blue-800' :
+          doctor.role === 'Patient' ? 'bg-green-100 text-green-800' :
           'bg-gray-100 text-gray-800'
         }`}>
-          {user.role}
+          {doctor.role}
         </span>
       </td>
-      <td className="px-4 py-3">{user.phone}</td>
+      <td className="px-4 py-3">{doctor.phone}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          doctor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
         }`}>
-          {user.status || 'Active'}
+          {doctor.status || 'Active'}
         </span>
       </td>
     </tr>
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
           <nav className="flex space-x-8">
             {[
               { id: 'overview', name: 'Overview' },
-              { id: 'users', name: 'Users' },
+              { id: 'doctors', name: 'Doctors' },
               { id: 'patients', name: 'Patients' },
               { id: 'appointments', name: 'Appointments' }
             ].map((tab) => (
@@ -268,8 +268,8 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Users Tab */}
-        {activeTab === 'users' && (
+        {/* Doctors Tab */}
+        {activeTab === 'doctors' && (
           <div className="bg-white rounded-lg shadow-md">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
@@ -286,8 +286,8 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <UserRow key={user._id} user={user} />
+                  {doctors.map((doctor) => (
+                    <DoctorRow key={doctor._id} doctor={doctor} />
                   ))}
                 </tbody>
               </table>
