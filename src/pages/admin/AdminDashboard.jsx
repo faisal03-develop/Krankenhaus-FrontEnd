@@ -16,6 +16,8 @@ const AdminDashboard = () => {
     totalAppointments: 0
   });
   const [users, setUsers] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -34,7 +36,8 @@ const AdminDashboard = () => {
         setUsers(usersRes.data.users);
         const doctors = usersRes.data.users.filter(user => user.role === 'doctor');
         const patients = usersRes.data.users.filter(user => user.role === 'patient');
-        
+        setPatients(patients);
+        setDoctors(doctors);
         setStats({
           totalUsers: usersRes.data.users.length,
           totalDoctors: doctors.length,
@@ -124,6 +127,32 @@ const AdminDashboard = () => {
     </tr>
   );
 
+
+  
+  const PatientRow = ({ patient }) => (
+    <tr className="border-b hover:bg-gray-50">
+      <td className="px-4 py-3">{patient.firstName} {patient.lastName}</td>
+      <td className="px-4 py-3">{patient.email}</td>
+      <td className="px-4 py-3">
+        <span className={`px-2 py-1 rounded-full text-xs ${
+          patient.role === 'Doctor' ? 'bg-blue-100 text-blue-800' :
+          patient.role === 'Patient' ? 'bg-green-100 text-green-800' :
+          'bg-gray-100 text-gray-800'
+        }`}>
+          {patient.role}
+        </span>
+      </td>
+      <td className="px-4 py-3">{patient.phone}</td>
+      <td className="px-4 py-3">
+        <span className={`px-2 py-1 rounded-full text-xs ${
+          patient.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {patient.status || 'Active'}
+        </span>
+      </td>
+    </tr>
+  );
+
   const AppointmentRow = ({ appointment }) => (
     <tr className="border-b hover:bg-gray-50">
       <td className="px-4 py-3">{appointment.firstName} {appointment.lastName}</td>
@@ -169,6 +198,7 @@ const AdminDashboard = () => {
             {[
               { id: 'overview', name: 'Overview' },
               { id: 'users', name: 'Users' },
+              { id: 'patients', name: 'Patients' },
               { id: 'appointments', name: 'Appointments' }
             ].map((tab) => (
               <button
@@ -258,6 +288,34 @@ const AdminDashboard = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {users.map((user) => (
                     <UserRow key={user._id} user={user} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+
+        
+        {/* Patients Tab */}
+        {activeTab === 'patients' && (
+          <div className="bg-white rounded-lg shadow-md">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Patient Management</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {patients.map((patient) => (
+                    <PatientRow key={patient._id} patient={patient} />
                   ))}
                 </tbody>
               </table>
