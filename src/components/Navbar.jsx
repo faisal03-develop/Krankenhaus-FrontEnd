@@ -61,29 +61,29 @@ const Navbar = () => {
                 Dashboard
             </Link>
             ) : null}
-            {isAuthenticated &&  user?.role == 'patient' ? (
+            {isAuthenticated &&  user?.role === 'patient' ? (
               <Link to="/patient/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Dashboard
             </Link>
             ) : null}
-            {isAuthenticated &&  user?.role === 'patient' ? (
+            {user?.role !== 'admin' ? (
                 <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                   Home
                 </Link>
             ) : null}
 
-            {isAuthenticated &&  user?.role === 'patient' ? (
+            {isAuthenticated &&  user?.role !== 'admin' ? (
               <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Appointment
               </Link>
             ) : null}
 
-            {isAuthenticated &&  user?.role === 'patient' ? (
+            {user?.role !== 'admin' ? (
               <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 About Us
               </Link>
             ) : null}
-            {isAuthenticated &&  user?.role === 'patient' ? (
+            {user?.role !== 'admin' ? (
               <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Contact
               </Link>
