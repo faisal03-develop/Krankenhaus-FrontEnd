@@ -41,51 +41,47 @@ const AddNewDoctor = () => {
   const handleFileChange = (e) => {
     setDocAvatar(e.target.files[0]);
   };
+  
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    const submitData = new FormData();
-    Object.keys(formData).forEach(key => {
-      submitData.append(key, formData[key]);
-    });
-    if (docAvatar) {
-      submitData.append('docAvatar', docAvatar);
-    }
+  if (!docAvatar) {
+    toast.error("Doctor avatar is required");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        'http://localhost:8000/api/v1/user/doctor/addnew',
-        submitData,
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      
-      toast.success(response.data.message);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        password: '',
-        gender: '',
-        dob: '',
-        nic: '',
-        doctorDepartment: ''
-      });
-      setDocAvatar(null);
-      navigate('/admin/dashboard');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add doctor');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const submitData = new FormData();
+
+  // Append text fields
+  Object.entries(formData).forEach(([key, value]) => {
+    submitData.append(key, value);
+  });
+
+  // Append file (THIS IS CRITICAL)
+  submitData.append("docAvatar", docAvatar);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/v1/user/addnewdoctor",
+      submitData,
+      {
+        withCredentials: true
+      }
+    );
+
+    toast.success(response.data.message);
+    navigate("/admin/dashboard");
+
+  } catch (error) {
+    toast.error(error.response?.data?.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">

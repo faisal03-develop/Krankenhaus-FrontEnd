@@ -133,15 +133,6 @@ const AdminDashboard = () => {
     <tr className="border-b hover:bg-gray-50">
       <td className="px-4 py-3">{patient.firstName} {patient.lastName}</td>
       <td className="px-4 py-3">{patient.email}</td>
-      <td className="px-4 py-3">
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          patient.role === 'Doctor' ? 'bg-blue-100 text-blue-800' :
-          patient.role === 'Patient' ? 'bg-green-100 text-green-800' :
-          'bg-gray-100 text-gray-800'
-        }`}>
-          {patient.role}
-        </span>
-      </td>
       <td className="px-4 py-3">{patient.phone}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
