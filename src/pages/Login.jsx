@@ -11,8 +11,7 @@ const Login = () => {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    role: ''
+    password: ''
   });
 
   const navigateTo = useNavigate();
@@ -30,8 +29,7 @@ const Login = () => {
     try{
       await axios.post('http://localhost:8000/api/v1/user/login', {
         email: formData.email,
-        password: formData.password,
-        role: formData.role
+        password: formData.password
       },{ withCredentials: true, headers: { 'Content-Type': 'application/json' } })
       .then((res)=>{
         console.log(res.data);
@@ -39,8 +37,7 @@ const Login = () => {
         setUser(res.data.user);
         setFormData({
           email: '',
-          password: '',
-          role: ''
+          password: ''
         });
       });
     }
@@ -110,7 +107,7 @@ const Login = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Login As
               </label>
@@ -126,7 +123,7 @@ const Login = () => {
                 <option value="admin">Admin</option>
                 <option value="doctor">Doctor</option>
               </select>
-            </div>
+            </div> */}
 
             <button
               type="submit"

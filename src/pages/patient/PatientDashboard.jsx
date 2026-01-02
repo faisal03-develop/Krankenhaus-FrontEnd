@@ -33,6 +33,8 @@ useEffect(() => {
         withCredentials: true 
       });
       const data = response.data;
+      setAppointments(data.appointments);
+      console.log(appointments);
       // setAppointments(data);
       console.log(data.appointments)
     } catch (error) {

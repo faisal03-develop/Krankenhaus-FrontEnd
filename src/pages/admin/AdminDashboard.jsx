@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../../main';
 
 const AdminDashboard = () => {
+
+  const navigateTo = useNavigate();
+  const { setIsAuthenticated, setUser } = useContext(Context);
+
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalDoctors: 0,
@@ -60,12 +66,25 @@ const AdminDashboard = () => {
     }
   }
 
-  const handleLogout = () => {
-    axios.get('http://localhost:8000/api/v1/user/admin/logout', { withCredentials: true })
-    document.cookie = 'adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    window.location.href = '/login';
+ const handleLogout = async () => {
+  try {
+    await axios.get(
+      'http://localhost:8000/api/v1/user/admin/logout',
+      { withCredentials: true }
+    );
+
     toast.success('Logged out successfully');
-  };
+    // update client auth state so protected routes and login redirect behave correctly
+    setIsAuthenticated(false);
+    setUser({});
+    navigateTo('/login', { replace: true });
+
+  } catch (error) {
+    toast.error('Logout failed');
+    console.error(error);
+  }
+};
+
 
   const StatCard = ({ title, value, icon, color }) => (
     <div className={`bg-white p-6 rounded-lg shadow-md border-l-4 ${color}`}>
