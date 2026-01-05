@@ -45,12 +45,6 @@ const PatientDashboard = () => {
 
 console.log("kk",appointments);
 
-
-  const upcomingAppointments = [
-    { id: 1, doctor: 'Dr. Sarah Johnson', department: 'Cardiology', date: '2024-01-15', time: '10:00 AM', status: 'Confirmed' },
-    { id: 2, doctor: 'Dr. Michael Chen', department: 'Neurology', date: '2024-01-20', time: '2:30 PM', status: 'Pending' }
-  ];
-
   const recentReports = [
     { id: 1, type: 'Blood Test', date: '2024-01-10', doctor: 'Dr. Sarah Johnson', status: 'Available' },
     { id: 2, type: 'X-Ray', date: '2024-01-08', doctor: 'Dr. Michael Chen', status: 'Available' }

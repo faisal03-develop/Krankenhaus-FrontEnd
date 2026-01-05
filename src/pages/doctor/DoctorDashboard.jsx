@@ -3,7 +3,6 @@ import { Context } from '../../main';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { isToday } from '../../utils/date/dateUtils';
 
 
 const DoctorDashboard = () => {
@@ -34,13 +33,6 @@ const DoctorDashboard = () => {
   console.log(`Okay: `,appointments)
   console.log(`Today's: `, todayTasks)
   
-  const todayAppointments = [
-    { id: 1, patient: 'John Smith', time: '09:00 AM', type: 'Consultation', status: 'Confirmed' },
-    { id: 2, patient: 'Sarah Johnson', time: '10:30 AM', type: 'Follow-up', status: 'In Progress' },
-    { id: 3, patient: 'Mike Wilson', time: '02:00 PM', type: 'Check-up', status: 'Pending' },
-    { id: 4, patient: 'Emma Davis', time: '03:30 PM', type: 'Consultation', status: 'Confirmed' }
-  ];
-
   const recentPatients = [
     { id: 1, name: 'Alice Brown', lastVisit: '2024-01-12', condition: 'Hypertension', status: 'Stable' },
     { id: 2, name: 'Robert Lee', lastVisit: '2024-01-11', condition: 'Diabetes', status: 'Monitoring' },
@@ -131,7 +123,7 @@ const DoctorDashboard = () => {
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Today's Appointments</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Appointments</h2>
                 <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View Schedule
                 </button>
@@ -139,8 +131,8 @@ const DoctorDashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {todayAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                {todayTasks.map((task) => (
+                  <div key={task._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,18 +140,18 @@ const DoctorDashboard = () => {
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{appointment.patient}</p>
-                        <p className="text-sm text-gray-600">{appointment.type}</p>
-                        <p className="text-xs text-gray-500">{appointment.time}</p>
+                        <p className="text-sm font-medium text-gray-900">{task.firstName + ` ` + task.lastName}</p>
+                        <p className="text-sm text-gray-600">{task.type}</p>
+                        <p className="text-xs text-gray-500">{new Date(task.a_date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                        appointment.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                        task.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        task.status === 'pending' ? 'bg-blue-100 text-blue-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {appointment.status}
+                        {task.status}
                       </span>
                       <button className="text-blue-600 hover:text-blue-700">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -97,7 +97,7 @@ useEffect(() => {
 
           </Routes>
         </main>
-        {user?.role !== 'admin' && <Footer />}
+        {user?.role !== 'admin' || user?.role !== 'doctor' && <Footer />}
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
       </Router>
     </>
