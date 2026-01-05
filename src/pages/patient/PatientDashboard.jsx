@@ -2,41 +2,38 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../main';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const PatientDashboard = () => {
-  const { user, isAuthenticated } = useContext(Context);
+  const { user } = useContext(Context);
 
-  const [appointments, setAppointments] = useState({
-        firstName:"",
-        lastName:"",
-        phone : "",
-        email: "",
-        nic: "",
-        dob: "",
-        gender: "",
-        doctor: {
-            firstName: "",
-            lastName: "",
-        },
-        a_date: "",
-        department: "",
-        doctorId: "",
-        patientId: "",
-        hasVisited: "",
-        address: "",
-});
-
-useEffect(() => {
+  // firstName:"",
+  // lastName:"",
+  // phone : "",
+  // email: "",
+  // nic: "",
+  // dob: "",
+  // gender: "",
+  // doctor: {
+    //     firstName: "",
+    //     lastName: "",
+    // },
+    // a_date: "",
+    // department: "",
+    // doctorId: "",
+    // patientId: "",
+    // hasVisited: "",
+    // address: "",
+    const [appointments, setAppointments] = useState([]);
+    
+    useEffect(() => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
         withCredentials: true 
       });
-      const data = response.data;
-      setAppointments(data.appointments);
-      console.log(appointments);
-      // setAppointments(data);
-      console.log(data.appointments)
+      setAppointments(response.data.appointments);
+      // console.log(response.data.appointments);
     } catch (error) {
       console.log(error.message);
       toast.error(error.response?.data?.message || 'Failed to fetch appointments');
@@ -44,7 +41,9 @@ useEffect(() => {
   };
   fetchPosts();
 }
-, [isAuthenticated]);
+, []);
+
+console.log("kk",appointments);
 
 
   const upcomingAppointments = [
@@ -70,7 +69,6 @@ useEffect(() => {
           <h1 className="text-3xl font-bold text-gray-900">Patient Dashboard</h1>
           <p className="text-gray-600 mt-2">Welcome back, {user?.firstName || 'Patient'}!</p>
         </div>
-
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -82,12 +80,12 @@ useEffect(() => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{upcomingAppointments.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,9 +97,9 @@ useEffect(() => {
                 <p className="text-2xl font-bold text-gray-900">{recentReports.length}</p>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +111,7 @@ useEffect(() => {
                 <p className="text-2xl font-bold text-gray-900">{medications.length}</p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
@@ -143,8 +141,8 @@ useEffect(() => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {upcomingAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                {appointments.map((appointment) => (
+                  <div key={appointment._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,13 +150,13 @@ useEffect(() => {
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{appointment.doctor}</p>
+                        <p className="text-sm font-medium text-gray-900">{`Dr. `+appointment.doctor.firstName + ` ` + appointment.doctor.lastName}</p>
                         <p className="text-sm text-gray-600">{appointment.department}</p>
-                        <p className="text-xs text-gray-500">{appointment.date} at {appointment.time}</p>
+                        <p className="text-xs text-gray-500">{new Date(appointment.a_date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      appointment.status === 'Confirmed' 
+                      appointment.status === 'accepted' 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
@@ -240,6 +238,7 @@ useEffect(() => {
 
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Link to="/appointment">
           <button className="p-6 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
             <div className="flex items-center justify-center mb-3">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +248,9 @@ useEffect(() => {
             <h3 className="text-lg font-semibold mb-2">Book Appointment</h3>
             <p className="text-sm opacity-90">Schedule a new appointment with our doctors</p>
           </button>
+          </Link>
 
+              <Link to="/contact">
           <button className="p-6 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
             <div className="flex items-center justify-center mb-3">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,6 +260,7 @@ useEffect(() => {
             <h3 className="text-lg font-semibold mb-2">Contact Doctor</h3>
             <p className="text-sm opacity-90">Send a message to your healthcare provider</p>
           </button>
+              </Link>
 
           <button className="p-6 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
             <div className="flex items-center justify-center mb-3">

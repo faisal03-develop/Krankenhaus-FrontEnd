@@ -66,7 +66,7 @@ const Navbar = () => {
                 Dashboard
             </Link>
             ) : null}
-            {user?.role !== 'admin' && user?.role !== 'doctor' ? (
+            {user?.role !== 'admin' && user?.role !== 'doctor' && !isAuthenticated ? (
                 <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                   Home
                 </Link>
@@ -78,7 +78,7 @@ const Navbar = () => {
               </Link>
             ) : null}
 
-            {user?.role !== 'admin' && user?.role !== 'doctor' ? (
+            {user?.role !== 'admin' && user?.role !== 'doctor' && !isAuthenticated ? (
               <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 About Us
               </Link>
