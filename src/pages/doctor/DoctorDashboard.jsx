@@ -3,23 +3,24 @@ import { Context } from '../../main';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { isToday } from '../../utils/date/dateUtils';
 
 
 const DoctorDashboard = () => {
   const { user } = useContext(Context);
 
   const [appointments, setAppointments] = useState([]);
-
-
+  const [pendingAppointments, setPendingAppointments] = useState([]);
+  const [todayTasks, setTodayTasks] = useState([]);
   const fetchAppointments = async () => {
     try{
       const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
         { withCredentials: true }
       );
-      console.log(response.data.appointments);
       setAppointments(response.data.appointments);
-      // console.log(appointments);
+      setTodayTasks(response.data.todayAppointments);
+      const pendingAppointments = response.data.appointments.filter(appointment => appointment.status === 'pending');
+      setPendingAppointments(pendingAppointments)
     }
     catch(error){
       console.log(error);
@@ -30,6 +31,8 @@ const DoctorDashboard = () => {
   useEffect(() => {
     fetchAppointments();
   },[]);
+  console.log(`Okay: `,appointments)
+  console.log(`Today's: `, todayTasks)
   
   const todayAppointments = [
     { id: 1, patient: 'John Smith', time: '09:00 AM', type: 'Consultation', status: 'Confirmed' },
@@ -74,8 +77,8 @@ const DoctorDashboard = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{todayAppointments.length}</p>
+                <p className="text-sm font-medium text-gray-600">Total Appointments</p>
+                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
               </div>
             </div>
           </div>
@@ -88,8 +91,8 @@ const DoctorDashboard = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Patients</p>
-                <p className="text-2xl font-bold text-gray-900">156</p>
+                <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
+                <p className="text-2xl font-bold text-gray-900">{todayTasks.length}</p>
               </div>
             </div>
           </div>
@@ -103,12 +106,12 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pending Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingTasks.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{pendingAppointments.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +123,7 @@ const DoctorDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900">94%</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
