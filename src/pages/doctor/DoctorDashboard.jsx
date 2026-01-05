@@ -3,11 +3,12 @@ import { Context } from '../../main';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const DoctorDashboard = () => {
   const { user } = useContext(Context);
-
+  const navigateTo = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [pendingAppointments, setPendingAppointments] = useState([]);
   const [todayTasks, setTodayTasks] = useState([]);
@@ -112,26 +113,34 @@ const DoctorDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Today's Appointments */}
+          {/* Appointments */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Appointments</h2>
+                <div>
+                <select name="type" id="type">
+                  <option value="pending">Pending</option>
+                  <option value="today">Today</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="completd">Completed</option>
+                </select>
                 <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View Schedule
                 </button>
+                </div>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 {todayTasks.map((task) => (
-                  <div key={task._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={task._id} onClick={()=>{navigateTo(`/doctor/report/${task._id}`)}} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                      </div>
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
                       <div className="ml-3">
                         <p className="text-sm font-medium text-gray-900">{task.firstName + ` ` + task.lastName}</p>
                         <p className="text-sm text-gray-600">{task.type}</p>

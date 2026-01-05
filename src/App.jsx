@@ -13,6 +13,7 @@ import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import UpdatePatient from './pages/patient/UpdatePatient.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
+import ReportGeneration from './pages/doctor/ReportGeneration.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AddNewDoctor from './pages/admin/addNewDoctor.jsx'
 import { useEffect } from 'react'
@@ -81,6 +82,12 @@ useEffect(() => {
             <Route path='/doctor/dashboard' element={
               <ProtectedRoute requiredRole="doctor">
                 <DoctorDashboard />
+              </ProtectedRoute>
+            }
+            />
+            <Route path='/doctor/report/:appointmentId' element={
+              <ProtectedRoute requiredRole="doctor">
+                <ReportGeneration />
               </ProtectedRoute>
             }
             />
