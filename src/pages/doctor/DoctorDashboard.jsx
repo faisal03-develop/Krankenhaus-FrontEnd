@@ -18,8 +18,7 @@ const DoctorDashboard = () => {
       );
       setAppointments(response.data.appointments);
       setTodayTasks(response.data.todayAppointments);
-      const pendingAppointments = response.data.appointments.filter(appointment => appointment.status === 'pending');
-      setPendingAppointments(pendingAppointments)
+      setPendingAppointments(response.data.pendingAppointments)
     }
     catch(error){
       console.log(error);
@@ -37,12 +36,6 @@ const DoctorDashboard = () => {
     { id: 1, name: 'Alice Brown', lastVisit: '2024-01-12', condition: 'Hypertension', status: 'Stable' },
     { id: 2, name: 'Robert Lee', lastVisit: '2024-01-11', condition: 'Diabetes', status: 'Monitoring' },
     { id: 3, name: 'Lisa Chen', lastVisit: '2024-01-10', condition: 'Migraine', status: 'Improved' }
-  ];
-
-  const pendingTasks = [
-    { id: 1, task: 'Review lab results for John Smith', priority: 'High', due: 'Today' },
-    { id: 2, task: 'Update treatment plan for Sarah Johnson', priority: 'Medium', due: 'Tomorrow' },
-    { id: 3, task: 'Prescription renewal for Mike Wilson', priority: 'Low', due: 'This Week' }
   ];
 
   return (
@@ -177,19 +170,17 @@ const DoctorDashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {pendingTasks.map((task) => (
-                  <div key={task.id} className="p-4 bg-gray-50 rounded-lg">
+                {pendingAppointments.map((appointment) => (
+                  <div key={appointment._id} className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-start justify-between mb-2">
-                      <p className="text-sm font-medium text-gray-900">{task.task}</p>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        task.priority === 'High' ? 'bg-red-100 text-red-800' :
-                        task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {task.priority}
-                      </span>
+                      <p className="text-sm font-medium text-gray-900">{appointment.firstName + ' ' + appointment.lastName}</p>
+                      <button className="text-blue-600 hover:text-blue-700">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
                     </div>
-                    <p className="text-xs text-gray-500">Due: {task.due}</p>
+                    <p className="text-xs text-gray-500">Due: {(new Date(appointment.a_date).toLocaleDateString())}</p>
                   </div>
                 ))}
               </div>

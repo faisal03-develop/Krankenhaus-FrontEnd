@@ -20,6 +20,7 @@ const AdminDashboard = () => {
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedStatus, setSelectedStatus] = useState('')
 
   useEffect(() => {
     fetchDashboardData();
@@ -55,11 +56,11 @@ const AdminDashboard = () => {
   };
 
 
-  const handleUpdateStatus = async (appointmentId) => {
+  const handleUpdateStatus = async (appointmentId, status) => {
     try{
       // Implement status update logic here // Replace with actual appointment ID
       await axios.put(`http://localhost:8000/api/v1/appointment/updateappointment/${appointmentId}`,
-        {status: 'accepted'},
+        {status},
         { withCredentials: true }
       )
       toast.success('Status updated successfully');
@@ -152,15 +153,27 @@ const AdminDashboard = () => {
       <td className="px-4 py-3">{new Date(appointment.a_date).toLocaleDateString()}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-          appointment.status === 'Accepted' ? 'bg-green-100 text-green-800' :
+          appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+          appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
+          appointment.status === 'completed' ? 'bg-cyan-100 text-blue-600':
           'bg-red-100 text-red-800'
         }`}>
           {appointment.status}
         </span>
       </td>
       <td>
-        <button onClick={() => handleUpdateStatus(appointment._id)} className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-2">Update Status</button>
+         <select
+            name="status"
+            value={appointment.status}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="border-none py-1 text-sm"
+          >
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="rejected">Rejected</option>
+          <option value="completed">Completed</option>
+        </select>
+        <button onClick={() => handleUpdateStatus(appointment._id,selectedStatus)} className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-2">Update Status</button>
       </td>
     </tr>
   );

@@ -10,6 +10,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
+import UpdatePatient from './pages/patient/UpdatePatient.jsx'
 import ProtectedRoute from './components/ProtectedRoute'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
@@ -72,6 +73,11 @@ useEffect(() => {
                 <PatientDashboard />
               </ProtectedRoute>
             } />
+            <Route path='/patient/update' element={
+              <ProtectedRoute requiredRole="patient">
+                <UpdatePatient />
+              </ProtectedRoute>
+            } />
             <Route path='/doctor/dashboard' element={
               <ProtectedRoute requiredRole="doctor">
                 <DoctorDashboard />
@@ -91,6 +97,14 @@ useEffect(() => {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AddNewDoctor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path='/updatepatient/:id'
+                element={
+                  <ProtectedRoute requiredRole="patient">
+                    <UpdatePatient />
                   </ProtectedRoute>
                 }
               />
