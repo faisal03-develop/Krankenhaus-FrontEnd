@@ -108,8 +108,7 @@ const AppContent = () => {
           />
         </Routes>
       </main>
-      {/* {user?.role !== 'admin' && user?.role !== 'doctor' && <Footer />} */}
-      {showNavbar && <Footer />}
+      {user?.role === 'patient' && <Footer />}
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
     </>

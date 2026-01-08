@@ -4,16 +4,18 @@ import axios from 'axios';
 const AppointmentSchedule = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [status, setStatus] = useState('all');
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
     fetchAppointments();
   }, []);
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getappointments', {
-        withCredentials: true
-      });
+      const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
+        { params:{status, limit},
+         withCredentials: true }    
+      );
       setAppointments(response.data.appointments || []);
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -34,9 +36,22 @@ const AppointmentSchedule = () => {
     <div className="min-h-screen bg-gray-100 py-8 pt-20">
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 flex flex-row justify-between">
+            <div>
+
             <h2 className="text-2xl font-bold text-gray-900">Appointment Schedule</h2>
             <p className="text-gray-600 mt-1">Manage all patient appointments</p>
+            </div>
+            <div>
+
+            <select name="status" id="status" value={status} onChange={(e)=>setStatus(e.target.value)}>
+                <option value="" disabled selected>Status</option>
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="completed">Completed</option>
+            </select>
+            </div>
           </div>
           
           <div className="overflow-x-auto">
@@ -46,11 +61,10 @@ const AppointmentSchedule = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -65,42 +79,34 @@ const AppointmentSchedule = () => {
                     <tr key={appointment._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {appointment.firstName} {appointment.lastName}
+                          {appointment.patientId.firstName + ` ` + appointment.patientId.lastName} {appointment.lastName}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {appointment.email}
+                        {appointment.patientId.email}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {appointment.phone}
+                        {appointment.patientId.phone}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {appointment.department}
+                        Dr. {appointment.doctor.firstName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        Dr. {appointment.doctor_firstName} {appointment.doctor_lastName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(appointment.appointment_date).toLocaleDateString()}
+                        {new Date(appointment.a_date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                          appointment.status === 'Accepted' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
+                          appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                            appointment.status === 'completed' ? 'bg-cyan-100 text-blue-600':
+                            'bg-red-100 text-red-800'
                         }`}>
                           {appointment.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button className="text-blue-600 hover:text-blue-900 mr-3">
-                          View
-                        </button>
-                        <button className="text-green-600 hover:text-green-900 mr-3">
-                          Accept
-                        </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          Reject
+                          Generate Report
                         </button>
                       </td>
                     </tr>
