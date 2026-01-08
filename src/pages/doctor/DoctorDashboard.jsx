@@ -10,16 +10,14 @@ const DoctorDashboard = () => {
   const { user } = useContext(Context);
   const navigateTo = useNavigate();
   const [appointments, setAppointments] = useState([]);
-  // const [pendingAppointments, setPendingAppointments] = useState([]);
-  // const [todayTasks, setTodayTasks] = useState([]);
+  const [status, setStatus] = useState('pending');
   const fetchAppointments = async () => {
     try{
       const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
-        { withCredentials: true }
+        { params:{status:status},
+         withCredentials: true }
       );
       setAppointments(response.data.appointments);
-      // setTodayTasks(response.data.todayAppointments);
-      // setPendingAppointments(response.data.pendingAppointments)
     }
     catch(error){
       console.log(error);
@@ -29,7 +27,7 @@ const DoctorDashboard = () => {
   }
   useEffect(() => {
     fetchAppointments();
-  },[]);
+  },[status]);
   console.log(`Okay: `,appointments)
   // console.log(`Pending: `, pendingAppointments)
   // console.log(`Today's: `, todayTasks)
@@ -93,7 +91,7 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pending Tasks</p>
-                {/* <p className="text-2xl font-bold text-gray-900">{pendingAppointments.length}</p> */}
+                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
               </div>
             </div>
           </div>
@@ -120,11 +118,16 @@ const DoctorDashboard = () => {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Appointments</h2>
                 <div>
-                <select name="type" id="type">
+                  <select
+                    name="status"
+                    id="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
                   <option>Status</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
-                  <option value="completd">Completed</option>
+                  <option value="completed">Completed</option>
                 </select>
                 <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View Schedule
@@ -133,9 +136,9 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="p-6">
-              {/* <div className="space-y-4">
-                {todayTasks.map((task) => (
-                  <div key={task._id} onClick={()=>{navigateTo(`/doctor/report/${task._id}`)}} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="space-y-4">
+                {appointments.map((appointment) => (
+                  <div key={appointment._id} onClick={()=>{navigateTo(`/doctor/report/${appointment._id}`)}} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
                           <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,18 +146,18 @@ const DoctorDashboard = () => {
                             </svg>
                           </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{task.firstName + ` ` + task.lastName}</p>
-                        <p className="text-sm text-gray-600">{task.type}</p>
-                        <p className="text-xs text-gray-500">{new Date(task.a_date).toLocaleDateString()}</p>
+                        <p className="text-sm font-medium text-gray-900">{appointment.patientId.firstName + ` ` + appointment.patientId.lastName}</p>
+                        {/* <p className="text-sm text-gray-600">{appointment.type}</p> */}
+                        <p className="text-xs text-gray-500">{new Date(appointment.a_date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        task.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        task.status === 'pending' ? 'bg-blue-100 text-blue-800' :
+                        appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        appointment.status === 'pending' ? 'bg-blue-100 text-blue-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {task.status}
+                        {appointment.status}
                       </span>
                       <button className="text-blue-600 hover:text-blue-700">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,12 +167,12 @@ const DoctorDashboard = () => {
                     </div>
                   </div>
                 ))}
-              </div> */}
+              </div>
             </div>
           </div>
 
           {/* Pending Tasks */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Pending Tasks</h2>
@@ -179,8 +182,8 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="p-6">
-              {/* <div className="space-y-4">
-                {pendingAppointments.map((appointment) => (
+              <div className="space-y-4">
+                {appointments.map((appointment) => (
                   <div key={appointment.patientId._id} className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-start justify-between mb-2">
                       <p className="text-sm font-medium text-gray-900">{appointment.patientId.firstName + ' ' + appointment.patientId.lastName}</p>
@@ -193,9 +196,9 @@ const DoctorDashboard = () => {
                     <p className="text-xs text-gray-500">Due: {(new Date(appointment.patientId.a_date).toLocaleDateString())}</p>
                   </div>
                 ))}
-              </div> */}
+              </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Recent Patients */}

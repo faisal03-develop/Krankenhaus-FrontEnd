@@ -63,6 +63,14 @@ const AdminDashboard = () => {
         {status},
         { withCredentials: true }
       )
+      setAppointments(prevAppointments => {
+        return prevAppointments.map(appointment => {
+          if (appointment._id === appointmentId) {
+            return { ...appointment, status };
+          }
+          return appointment;
+        });
+      })
       toast.success('Status updated successfully');
     }
     catch(error){
