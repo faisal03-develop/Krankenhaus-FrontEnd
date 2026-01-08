@@ -20,8 +20,7 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
-import MainLayout from './layouts/MainLayout.jsx'
-import AuthLayout from './layouts/AuthLayout.jsx'
+import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
 
 const AppContent = () => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
@@ -101,6 +100,12 @@ const AppContent = () => {
               <UpdatePatient />
             </ProtectedRoute>
           } />
+          <Route path='/doctor/schedule' element={
+            <ProtectedRoute requiredRole="doctor">
+              <AppointmentSchedule />
+            </ProtectedRoute>
+          }
+          />
         </Routes>
       </main>
       {/* {user?.role !== 'admin' && user?.role !== 'doctor' && <Footer />} */}

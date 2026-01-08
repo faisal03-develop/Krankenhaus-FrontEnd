@@ -11,6 +11,8 @@ const DoctorDashboard = () => {
   const navigateTo = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [status, setStatus] = useState('pending');
+  const [pendingTasks, setPendingTasks] = useState(0);
+  const [totalAppointment, setTotalAppointment] = useState(0);
   const fetchAppointments = async () => {
     try{
       const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
@@ -18,6 +20,8 @@ const DoctorDashboard = () => {
          withCredentials: true }
       );
       setAppointments(response.data.appointments);
+      setTotalAppointment(response.data.totalAppointment);
+      setPendingTasks(response.data.pendingTasks);
     }
     catch(error){
       console.log(error);
@@ -28,7 +32,8 @@ const DoctorDashboard = () => {
   useEffect(() => {
     fetchAppointments();
   },[status]);
-  console.log(`Okay: `,appointments)
+  // console.log(`Okay: `,appointments)
+  // console.log(`Appointments: ${totalAppointment}`)
   // console.log(`Pending: `, pendingAppointments)
   // console.log(`Today's: `, todayTasks)
   
@@ -63,12 +68,12 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{totalAppointment}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,10 +82,10 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-                {/* <p className="text-2xl font-bold text-gray-900">{todayTasks.length}</p> */}
-              </div>
+                <p className="text-2xl font-bold text-gray-900">{todayTasks.length}</p>
+              </div> 
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
@@ -91,7 +96,7 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pending Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{pendingTasks}</p>
               </div>
             </div>
           </div>
@@ -124,13 +129,13 @@ const DoctorDashboard = () => {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
-                  <option>Status</option>
+                  <option value="" disabled selected>Status</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
                   <option value="completed">Completed</option>
                 </select>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  View Schedule
+                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium" onClick={()=>{navigateTo('/doctor/schedule')}}>
+                  View All
                 </button>
                 </div>
               </div>
