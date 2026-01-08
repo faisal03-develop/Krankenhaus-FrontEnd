@@ -8,3 +8,14 @@ export const isToday = (dbDate) => {
     today.getDate() === dateFromDb.getDate()
   );
 };
+
+export const isNotPastDate = (selectedDate) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const appointmentDate = new Date(selectedDate);
+  appointmentDate.setHours(0, 0, 0, 0);
+
+  return appointmentDate >= today;
+};
+

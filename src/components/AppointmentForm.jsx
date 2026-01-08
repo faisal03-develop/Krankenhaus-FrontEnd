@@ -2,18 +2,12 @@ import axios from 'axios';
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from '../main';
 import { toast } from 'react-toastify';
+import {isNotPastDate} from "../utils/date/dateUtils"
 
 const AppointmentForm = () => {
   const { isAuthenticated, user } = useContext(Context);
   
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    nic: '',
-    dob: '',
-    gender: '',
     a_date: '',
     department: '',
     doctor_firstName: '',
@@ -27,13 +21,6 @@ const AppointmentForm = () => {
 
   setFormData(prev => ({
     ...prev,
-    firstName: user.firstName ?? '',
-    lastName: user.lastName ?? '',
-    email: user.email ?? '',
-    phone: user.phone ?? '',
-    nic: user.nic ?? '',
-    dob: user.dob ? user.dob.slice(0, 10) : '',
-    gender: user.gender ?? '',
     hasVisited: user.hasVisited ?? false
   }));
 }, [isAuthenticated]);
@@ -50,18 +37,17 @@ const AppointmentForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
+
+      if (!isNotPastDate(formData.a_date)) {
+        alert("Appointment date cannot be in the past.");
+        return;
+      }
+
       await axios.post('http://localhost:8000/api/v1/appointment/bookappointment', 
         {...formData},
       {withCredentials:true, headers: { "Content-Type": "application/json"}});
       toast.success("Appointment booked successfully");
       setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        nic: '',
-        dob: '',
-        gender: '',
         a_date: '',
         department: '',
         doctor_firstName: '',
@@ -105,7 +91,7 @@ const AppointmentForm = () => {
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.firstName}
+                    value={user.firstName}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -124,7 +110,7 @@ const AppointmentForm = () => {
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.lastName}
+                    value={user.lastName}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -143,7 +129,7 @@ const AppointmentForm = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={user.email}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -162,7 +148,7 @@ const AppointmentForm = () => {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone}
+                    value={user.phone}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -181,7 +167,7 @@ const AppointmentForm = () => {
                   <input
                     type="text"
                     name="nic"
-                    value={formData.nic}
+                    value={user.nic}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -200,7 +186,7 @@ const AppointmentForm = () => {
                   <input
                     type="date"
                     name="dob"
-                    value={formData.dob}
+                      value={user.dob ? user.dob.split('T')[0] : ''}
                     onChange={handleChange}
                     readOnly={isAuthenticated}
                     className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base ${
@@ -222,7 +208,7 @@ const AppointmentForm = () => {
                           type="radio"
                           name="gender"
                           value={gender}
-                          checked={formData.gender === gender}
+                          checked={user.gender === gender}
                           onChange={handleChange}
                           disabled={isAuthenticated}
                           className={`w-4 h-4 text-blue-600 border-gray-300 ${

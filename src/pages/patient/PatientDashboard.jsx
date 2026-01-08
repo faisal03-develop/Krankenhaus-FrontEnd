@@ -25,6 +25,7 @@ const PatientDashboard = () => {
     // hasVisited: "",
     // address: "",
     const [appointments, setAppointments] = useState([]);
+    const [upcommingAppointments, setUpcommingAppointments] = useState([]);
     
     useEffect(() => {
   const fetchPosts = async () => {
@@ -33,6 +34,7 @@ const PatientDashboard = () => {
         withCredentials: true 
       });
       setAppointments(response.data.appointments);
+      setUpcommingAppointments(response.data.upcommingAppointments)
       // console.log(response.data.appointments);
     } catch (error) {
       console.log(error.message);
@@ -74,7 +76,7 @@ console.log("kk",appointments);
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{appointments.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{upcommingAppointments.length}</p>
               </div>
             </div>
           </div>
@@ -135,7 +137,7 @@ console.log("kk",appointments);
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {appointments.map((appointment) => (
+                {upcommingAppointments.map((appointment) => (
                   <div key={appointment._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">

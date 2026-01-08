@@ -147,8 +147,8 @@ const AdminDashboard = () => {
 
   const AppointmentRow = ({ appointment }) => (
     <tr className="border-b hover:bg-gray-50">
-      <td className="px-4 py-3">{appointment.firstName} {appointment.lastName}</td>
-      <td className="px-4 py-3">{appointment.email}</td>
+      <td className="px-4 py-3">{appointment.patientId.firstName} {appointment.patientId.lastName}</td>
+      <td className="px-4 py-3">{appointment.patientId.email}</td>
       <td className="px-4 py-3">{appointment.department}</td>
       <td className="px-4 py-3">{new Date(appointment.a_date).toLocaleDateString()}</td>
       <td className="px-4 py-3">

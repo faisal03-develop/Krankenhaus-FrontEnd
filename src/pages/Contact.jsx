@@ -15,6 +15,9 @@ const Contact = () => {
         </div>
       </section>
 
+      {/* Message Form */}
+      <MessageForm />
+      
       {/* Contact Information */}
       <section className="py-12 md:py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -54,8 +57,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Message Form */}
-      <MessageForm />
 
       {/* Hours Section */}
       <section className="py-12 md:py-16 px-4 bg-blue-600">

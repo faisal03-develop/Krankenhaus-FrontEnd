@@ -10,16 +10,16 @@ const DoctorDashboard = () => {
   const { user } = useContext(Context);
   const navigateTo = useNavigate();
   const [appointments, setAppointments] = useState([]);
-  const [pendingAppointments, setPendingAppointments] = useState([]);
-  const [todayTasks, setTodayTasks] = useState([]);
+  // const [pendingAppointments, setPendingAppointments] = useState([]);
+  // const [todayTasks, setTodayTasks] = useState([]);
   const fetchAppointments = async () => {
     try{
       const response = await axios.get('http://localhost:8000/api/v1/appointment/doctor/getAppointments',
         { withCredentials: true }
       );
       setAppointments(response.data.appointments);
-      setTodayTasks(response.data.todayAppointments);
-      setPendingAppointments(response.data.pendingAppointments)
+      // setTodayTasks(response.data.todayAppointments);
+      // setPendingAppointments(response.data.pendingAppointments)
     }
     catch(error){
       console.log(error);
@@ -31,7 +31,8 @@ const DoctorDashboard = () => {
     fetchAppointments();
   },[]);
   console.log(`Okay: `,appointments)
-  console.log(`Today's: `, todayTasks)
+  // console.log(`Pending: `, pendingAppointments)
+  // console.log(`Today's: `, todayTasks)
   
   const recentPatients = [
     { id: 1, name: 'Alice Brown', lastVisit: '2024-01-12', condition: 'Hypertension', status: 'Stable' },
@@ -78,7 +79,7 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{todayTasks.length}</p>
+                {/* <p className="text-2xl font-bold text-gray-900">{todayTasks.length}</p> */}
               </div>
             </div>
           </div>
@@ -92,7 +93,7 @@ const DoctorDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pending Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingAppointments.length}</p>
+                {/* <p className="text-2xl font-bold text-gray-900">{pendingAppointments.length}</p> */}
               </div>
             </div>
           </div>
@@ -120,8 +121,8 @@ const DoctorDashboard = () => {
                 <h2 className="text-xl font-semibold text-gray-900">Appointments</h2>
                 <div>
                 <select name="type" id="type">
+                  <option>Status</option>
                   <option value="pending">Pending</option>
-                  <option value="today">Today</option>
                   <option value="accepted">Accepted</option>
                   <option value="completd">Completed</option>
                 </select>
@@ -132,7 +133,7 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="p-6">
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 {todayTasks.map((task) => (
                   <div key={task._id} onClick={()=>{navigateTo(`/doctor/report/${task._id}`)}} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
@@ -163,7 +164,7 @@ const DoctorDashboard = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -178,21 +179,21 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="p-6">
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 {pendingAppointments.map((appointment) => (
-                  <div key={appointment._id} className="p-4 bg-gray-50 rounded-lg">
+                  <div key={appointment.patientId._id} className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-start justify-between mb-2">
-                      <p className="text-sm font-medium text-gray-900">{appointment.firstName + ' ' + appointment.lastName}</p>
+                      <p className="text-sm font-medium text-gray-900">{appointment.patientId.firstName + ' ' + appointment.patientId.lastName}</p>
                       <button className="text-blue-600 hover:text-blue-700">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
                     </div>
-                    <p className="text-xs text-gray-500">Due: {(new Date(appointment.a_date).toLocaleDateString())}</p>
+                    <p className="text-xs text-gray-500">Due: {(new Date(appointment.patientId.a_date).toLocaleDateString())}</p>
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
