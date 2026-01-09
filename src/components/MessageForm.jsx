@@ -1,13 +1,16 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
+// import  from "../App"
+import {Context } from '../main';
 
 const MessageForm = () => {
+  const { user } = useContext(Context);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName:user?.firstName || '',
+    lastName:user?.lastName || '',
+    email:user?.email || '',
+    phone:user?.phone ||'',
     message: ''
   });
 
@@ -77,7 +80,7 @@ const MessageForm = () => {
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.firstName}
+                    value={user?.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your first name"
@@ -91,7 +94,7 @@ const MessageForm = () => {
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.lastName}
+                    value={user?.lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your last name"
@@ -108,7 +111,7 @@ const MessageForm = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={user?.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your email"
@@ -122,7 +125,7 @@ const MessageForm = () => {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone}
+                    value={user?.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your phone number"
