@@ -21,7 +21,9 @@ import axios from 'axios'
 import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
 import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
-import ReportView from './pages/patient/ReportView.jsx'
+import ReportView from './pages/patient/ReportView.jsx';
+import DoctorReports from './pages/doctor/DoctorReports.jsx';
+import NotFound from './pages/NotFound.jsx'
 
 const AppContent = () => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
@@ -107,10 +109,13 @@ const AppContent = () => {
             </ProtectedRoute>
           }
           />
-          <Route path='*' element={<h1>Page Not Found</h1>} />
+          <Route path='*' element={<NotFound />}/>
           <Route path='/patient/report/:reportId' element={
-            <ProtectedRoute requiredRole="patient">
               <ReportView />
+          } />
+          <Route path='/doctor/reports' element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorReports />
             </ProtectedRoute>
           } />
         </Routes>
