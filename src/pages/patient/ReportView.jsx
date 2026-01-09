@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useContext } from 'react';
+// import { useParams } from 'react-router-dom';
+import { Context } from '../../main';
 
 const ReportView = () => {
-  const { reportId } = useParams();
+    const {user} = useContext(Context);
+//   const { reportId } = useParams();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchReport();
-  }, [reportId]);
+  }, []);
 
   const fetchReport = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/v1/report/${reportId}`, {
+      const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
         withCredentials: true
       });
-      setReport(response.data.report);
+      setReport(response.data.reports);
     } catch (error) {
       console.error('Error fetching report:', error);
     } finally {
@@ -40,8 +43,9 @@ const ReportView = () => {
     );
   }
 
+  console.log("Ropoerscc", report)
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
+    <div className="min-h-screen bg-gray-100 py-8 pt-20">
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* Header */}
