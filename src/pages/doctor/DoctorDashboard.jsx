@@ -19,15 +19,25 @@ const DoctorDashboard = () => {
         { params:{status:status},
          withCredentials: true }
       );
-      setAppointments(response.data.appointments);
-      setTotalAppointment(response.data.totalAppointment);
-      setPendingTasks(response.data.pendingTasks);
+      setAppointments(response.data.appointments || []);
+      setTotalAppointment(response.data.totalAppointment || 0);
+      setPendingTasks(response.data.pendingTasks || 0);
+      
+      if (!response.data.appointments || response.data.appointments.length === 0) {
+        toast.info(`No ${status} appointments found`);
+      }
     }
     catch(error){
       console.log(error);
-      toast.error("Error fetching appointments");
+      if (error.response?.status === 404) {
+        toast.info(`No ${status} appointments found`);
+        setAppointments([]);
+        setTotalAppointment(0);
+        setPendingTasks(0);
+      } else {
+        toast.error("Error fetching appointments");
+      }
     }
-
   }
   useEffect(() => {
     fetchAppointments();
@@ -143,7 +153,11 @@ const DoctorDashboard = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {appointments.map((appointment) => (
-                  <div key={appointment._id} onClick={()=>{navigateTo(`/doctor/report/${appointment._id}`)}} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={appointment._id} onClick={()=>{
+                    if(appointment.status === 'accepted')
+                        {navigateTo(`/doctor/report/${appointment._id}`)
+                      }
+                      }} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
                           <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
