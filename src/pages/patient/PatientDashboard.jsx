@@ -3,29 +3,14 @@ import { Context } from '../../main';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const PatientDashboard = () => {
   const { user } = useContext(Context);
-
-  // firstName:"",
-  // lastName:"",
-  // phone : "",
-  // email: "",
-  // nic: "",
-  // dob: "",
-  // gender: "",
-  // doctor: {
-    //     firstName: "",
-    //     lastName: "",
-    // },
-    // a_date: "",
-    // department: "",
-    // doctorId: "",
-    // patientId: "",
-    // hasVisited: "",
-    // address: "",
-    const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
+    // const [appointments, setAppointments] = useState([]);
     const [upcommingAppointments, setUpcommingAppointments] = useState([]);
+    const [reports, setReports] = useState([]);
     
     useEffect(() => {
   const fetchPosts = async () => {
@@ -33,7 +18,7 @@ const PatientDashboard = () => {
       const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
         withCredentials: true 
       });
-      setAppointments(response.data.appointments);
+      // setAppointments(response.data.appointments);
       setUpcommingAppointments(response.data.upcommingAppointments)
       // console.log(response.data.appointments);
     } catch (error) {
@@ -45,12 +30,26 @@ const PatientDashboard = () => {
 }
 , []);
 
-console.log("kk",appointments);
+useEffect(() => {
+  const fetchReport = async () =>{
+    try {
+      const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
+        withCredentials: true
+      });
+      // console.log(response.data.reports);
+      setReports(response.data.reports);
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response?.data?.message || 'Failed to fetch appointments');
+    }
+  }
+  fetchReport();
+}, [])
 
-  const recentReports = [
-    { id: 1, type: 'Blood Test', date: '2024-01-10', doctor: 'Dr. Sarah Johnson', status: 'Available' },
-    { id: 2, type: 'X-Ray', date: '2024-01-08', doctor: 'Dr. Michael Chen', status: 'Available' }
-  ];
+
+
+// console.log("kk",appointments);
+console.log("reports", reports);
 
   const medications = [
     { id: 1, name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', prescribedBy: 'Dr. Sarah Johnson' },
@@ -90,7 +89,7 @@ console.log("kk",appointments);
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Medical Reports</p>
-                <p className="text-2xl font-bold text-gray-900">{recentReports.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{reports.length}</p>
               </div>
             </div>
           </div>
@@ -169,14 +168,14 @@ console.log("kk",appointments);
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Recent Reports</h2>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button onClick={() => navigate(`/patient/report/${user._id}`)}  className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View All
                 </button>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {recentReports.map((report) => (
+                {reports.map((report) => (
                   <div key={report.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center">
                       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -185,13 +184,13 @@ console.log("kk",appointments);
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{report.type}</p>
+                        <p className="text-sm font-medium text-gray-900">{report.reportName}</p>
                         <p className="text-sm text-gray-600">{report.doctor}</p>
-                        <p className="text-xs text-gray-500">{report.date}</p>
+                        <p className="text-xs text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <button className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100">
-                      Download
+                      View
                     </button>
                   </div>
                 ))}

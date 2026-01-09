@@ -21,6 +21,7 @@ import axios from 'axios'
 import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
 import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
+import ReportView from './pages/patient/ReportView.jsx'
 
 const AppContent = () => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
@@ -106,6 +107,12 @@ const AppContent = () => {
             </ProtectedRoute>
           }
           />
+          <Route path='*' element={<h1>Page Not Found</h1>} />
+          <Route path='/patient/report/:id' element={
+            <ProtectedRoute requiredRole="patient">
+              <ReportView />
+            </ProtectedRoute>
+          } />
         </Routes>
       </main>
       {(user?.role !== 'admin' && user?.role !== 'doctor') && <Footer />}
