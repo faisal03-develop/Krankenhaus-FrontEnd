@@ -168,7 +168,7 @@ console.log("reports", reports);
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Recent Reports</h2>
-                <button onClick={() => navigate(`/patient/report/${user._id}`)}  className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button   className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View All
                 </button>
               </div>
@@ -189,7 +189,7 @@ console.log("reports", reports);
                         <p className="text-xs text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <button className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100">
+                    <button onClick={() => navigate(`/patient/report/${report._id}`)} className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100">
                       View
                     </button>
                   </div>

@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useContext } from 'react';
-// import { useParams } from 'react-router-dom';
+// import { useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import { Context } from '../../main';
 
 const ReportView = () => {
-    const {user} = useContext(Context);
-//   const { reportId } = useParams();
-  const [report, setReport] = useState(null);
+    // const {user} = useContext(Context);
+  const { reportId } = useParams();
+  const [report, setReport] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchReport();
-  }, []);
+  if (!reportId) return;
+  setLoading(true);
+  fetchReport(reportId);
+}, [reportId]);
 
-  const fetchReport = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
-        withCredentials: true
-      });
-      setReport(response.data.reports);
-    } catch (error) {
-      console.error('Error fetching report:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  const fetchReport = async (id) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8000/api/v1/report/getreport/${id}`,
+      { withCredentials: true }
+    );
+    setReport(response.data.report[0]);
+  } catch (error) {
+    console.error("Error fetching report:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   if (loading) {
     return (
@@ -43,7 +48,8 @@ const ReportView = () => {
     );
   }
 
-  console.log("Ropoerscc", report)
+  console.log('Report on the view Page: ',report)
+
   return (
     <div className="min-h-screen bg-gray-100 py-8 pt-20">
       <div className="max-w-4xl mx-auto px-4">

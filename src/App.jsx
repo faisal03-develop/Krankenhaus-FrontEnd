@@ -108,7 +108,7 @@ const AppContent = () => {
           }
           />
           <Route path='*' element={<h1>Page Not Found</h1>} />
-          <Route path='/patient/report/:id' element={
+          <Route path='/patient/report/:reportId' element={
             <ProtectedRoute requiredRole="patient">
               <ReportView />
             </ProtectedRoute>

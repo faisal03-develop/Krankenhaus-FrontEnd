@@ -129,7 +129,7 @@ const DoctorDashboard = () => {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
-                  <option value="" disabled selected>Status</option>
+                  <option value="" disabled>Status</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
                   <option value="completed">Completed</option>
