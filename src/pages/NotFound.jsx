@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Context } from '../main';
 const NotFound = () => {
   const navigate = useNavigate();
-
+  const { isAuthenticated } = React.useContext(Context);
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="text-center">
@@ -24,7 +24,7 @@ const NotFound = () => {
             onClick={() => navigate('/')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
           >
-            Go Home
+            (${!isAuthenticated} && Go Home)
           </button>
         </div>
       </div>

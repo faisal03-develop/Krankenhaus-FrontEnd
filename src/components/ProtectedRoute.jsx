@@ -4,7 +4,11 @@ import { Context } from '../main';
 import { toast } from 'react-toastify';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const { isAuthenticated, user } = useContext(Context);
+  const { isAuthenticated, user, loading } = useContext(Context);
+  
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  }
   
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

@@ -26,7 +26,7 @@ import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx'
 
 const AppContent = () => {
-  const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
+  const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
   const location = useLocation();
   const hideNavbarRoutes = ['/login', '/register'];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname) && user?.role !== 'admin' ;
@@ -43,14 +43,16 @@ const AppContent = () => {
           setIsAuthenticated(false);
           setUser(null);
         }
+        setLoading(false);
       })
       .catch(() => {
         setIsAuthenticated(false);
         setUser(null);
+        setLoading(false);
       });
     };
     fetchUser();
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <>
@@ -109,9 +111,11 @@ const AppContent = () => {
             </ProtectedRoute>
           }
           />
-          <Route path='*' element={<NotFound />}/>
+          <Route path='*' element={<NotFound />} />
           <Route path='/patient/report/:reportId' element={
+            <ProtectedRoute requiredRole="patient">
               <ReportView />
+            </ProtectedRoute>
           } />
           <Route path='/doctor/reports' element={
             <ProtectedRoute requiredRole="doctor">
@@ -120,7 +124,7 @@ const AppContent = () => {
           } />
         </Routes>
       </main>
-      {(user?.role !== 'admin' && user?.role !== 'doctor') && <Footer />}
+      {(!isAuthenticated) && <Footer />}
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
     </>

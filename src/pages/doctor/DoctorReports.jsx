@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Context } from '../../main';
 import { useNavigate } from 'react-router-dom';
 
-const ViewReports = () => {
+const DoctorReports = () => {
   const { user } = useContext(Context);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -115,4 +115,4 @@ const ViewReports = () => {
   );
 };
 
-export default ViewReports;
+export default DoctorReports;

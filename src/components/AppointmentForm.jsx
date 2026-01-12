@@ -5,11 +5,13 @@ import { toast } from 'react-toastify';
 import {isNotPastDate} from "../utils/date/dateUtils"
 
 const AppointmentForm = () => {
+  const [department, setDepartment] = useState('Select Department');
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [doctor, setDoctor] = useState([])
   const { isAuthenticated, user } = useContext(Context);
   
   const [formData, setFormData] = useState({
     a_date: '',
-    department: '',
     doctor_firstName: '',
     doctor_lastName: '',
     address: '',
@@ -24,6 +26,48 @@ const AppointmentForm = () => {
     hasVisited: user.hasVisited ?? false
   }));
 }, [isAuthenticated]);
+
+
+
+const getUser = async () => {
+  if (!department) return;
+
+  try {
+    const response = await axios.get(
+      'http://localhost:8000/api/v1/user/getdoctor',
+      {
+        params: { department },
+        withCredentials: true
+      }
+    );
+
+    const doctors = response.data?.doctors || [];
+
+    if (doctors.length === 0) {
+      toast.info("No doctors available for this department");
+    }
+
+    setDoctor(doctors);
+  } catch (error) {
+    console.error(error);
+    toast.error(error.response?.data?.message || 'Failed to fetch doctors');
+  }
+};
+
+useEffect(() => {
+  setSelectedDoctor("");
+  setDoctor([]);
+  if (department) {
+    getUser();
+  }
+}, [department]);
+
+
+console.log(doctor)
+const handleSelect = (e) => {
+  setDepartment(e.target.value);
+};
+
 
 
   const handleChange = (e) => {
@@ -43,18 +87,29 @@ const AppointmentForm = () => {
         return;
       }
 
-      await axios.post('http://localhost:8000/api/v1/appointment/bookappointment', 
-        {...formData},
-      {withCredentials:true, headers: { "Content-Type": "application/json"}});
-      toast.success("Appointment booked successfully");
+      await axios.post(
+      'http://localhost:8000/api/v1/appointment/bookappointment',
+      {
+        ...formData,
+        department,
+        doctorId: selectedDoctor
+      },
+      {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" }
+      }
+      ).then(res => {
+        toast.success(res.data.message);
+      });
+
       setFormData({
         a_date: '',
-        department: '',
-        doctor_firstName: '',
-        doctor_lastName: '',
         address: '',
         hasVisited: false
       }); 
+      setDepartment("");        // ✅ reset department
+      setSelectedDoctor("");    // ✅ reset selected doctor
+      setDoctor([]);
     }
     catch(error){
       console.log(formData);
@@ -251,8 +306,8 @@ const AppointmentForm = () => {
                   </label>
                   <select
                     name="department"
-                    value={formData.department}
-                    onChange={handleChange}
+                    value={department}
+                    onChange={handleSelect}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
                     required
                   >
@@ -266,21 +321,42 @@ const AppointmentForm = () => {
                     <option value="ENT">ENT</option>
                   </select>
                 </div>
+
+                {/* Doctor.... */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Doctor First Name *
                   </label>
-                  <input
-                    type="text"
-                    name="doctor_firstName"
-                    value={formData.doctor_firstName}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-                    placeholder="Doctor's first name"
+
+                  <select
+                    value={selectedDoctor}
+                    onChange={(e) => setSelectedDoctor(e.target.value)}
+                    disabled={!department || doctor.length === 0}
+                    className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 text-sm md:text-base
+                      ${
+                        !department
+                          ? 'bg-gray-100 cursor-not-allowed'
+                          : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                      }`}
                     required
-                  />
+                  >
+                    <option value="">
+                      {!department
+                        ? 'Select department first'
+                        : doctor.length === 0
+                        ? 'No doctors available'
+                        : 'Select Doctor'}
+                    </option>
+
+                    {doctor.map((doc) => (
+                      <option key={doc._id} value={doc._id}>
+                        {doc.firstName + ' ' + doc.lastName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div>
+
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Doctor Last Name *
                   </label>
@@ -293,7 +369,7 @@ const AppointmentForm = () => {
                     placeholder="Doctor's last name"
                     required
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 

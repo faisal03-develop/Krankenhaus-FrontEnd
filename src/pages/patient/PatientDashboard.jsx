@@ -51,10 +51,10 @@ useEffect(() => {
 // console.log("kk",appointments);
 console.log("reports", reports);
 
-  const medications = [
-    { id: 1, name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', prescribedBy: 'Dr. Sarah Johnson' },
-    { id: 2, name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', prescribedBy: 'Dr. Michael Chen' }
-  ];
+  // const medications = [
+  //   { id: 1, name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', prescribedBy: 'Dr. Sarah Johnson' },
+  //   { id: 2, name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', prescribedBy: 'Dr. Michael Chen' }
+  // ];
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -94,7 +94,7 @@ console.log("reports", reports);
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ console.log("reports", reports);
                 <p className="text-2xl font-bold text-gray-900">{medications.length}</p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center">
@@ -145,7 +145,7 @@ console.log("reports", reports);
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{`Dr. `+appointment.doctor.firstName + ` ` + appointment.doctor.lastName}</p>
+                        <p className="text-sm font-medium text-gray-900">{`Dr. `+appointment.doctorId.firstName + ` ` + appointment.doctorId.lastName}</p>
                         <p className="text-sm text-gray-600">{appointment.department}</p>
                         <p className="text-xs text-gray-500">{new Date(appointment.a_date).toLocaleDateString()}</p>
                       </div>
@@ -200,7 +200,7 @@ console.log("reports", reports);
         </div>
 
         {/* Medications */}
-        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Current Medications</h2>
@@ -229,7 +229,7 @@ console.log("reports", reports);
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">

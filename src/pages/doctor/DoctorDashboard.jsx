@@ -10,7 +10,7 @@ const DoctorDashboard = () => {
   const { user } = useContext(Context);
   const navigateTo = useNavigate();
   const [appointments, setAppointments] = useState([]);
-  const [status, setStatus] = useState('pending');
+  const [status, setStatus] = useState('all');
   const [pendingTasks, setPendingTasks] = useState(0);
   const [totalAppointment, setTotalAppointment] = useState(0);
   const fetchAppointments = async () => {
@@ -46,12 +46,7 @@ const DoctorDashboard = () => {
   // console.log(`Appointments: ${totalAppointment}`)
   // console.log(`Pending: `, pendingAppointments)
   // console.log(`Today's: `, todayTasks)
-  
-  const recentPatients = [
-    { id: 1, name: 'Alice Brown', lastVisit: '2024-01-12', condition: 'Hypertension', status: 'Stable' },
-    { id: 2, name: 'Robert Lee', lastVisit: '2024-01-11', condition: 'Diabetes', status: 'Monitoring' },
-    { id: 3, name: 'Lisa Chen', lastVisit: '2024-01-10', condition: 'Migraine', status: 'Improved' }
-  ];
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -140,6 +135,7 @@ const DoctorDashboard = () => {
                     onChange={(e) => setStatus(e.target.value)}
                   >
                   <option value="" disabled>Status</option>
+                  <option value="all">All</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
                   <option value="completed">Completed</option>
@@ -224,7 +220,7 @@ const DoctorDashboard = () => {
         </div>
 
         {/* Recent Patients */}
-        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Recent Patients</h2>
@@ -260,7 +256,7 @@ const DoctorDashboard = () => {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
