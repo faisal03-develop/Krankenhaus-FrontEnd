@@ -24,7 +24,7 @@ import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
 import ReportView from './pages/patient/ReportView.jsx';
 import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx';
-import PatientAppointments from './pages/patient/AppointmentView.jsx'
+import PatientAppointments from './pages/patient/AppointmentView.jsx';
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);

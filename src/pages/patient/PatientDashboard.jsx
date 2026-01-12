@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import Skeleton from '../../components/Skeleton';
 
 const PatientDashboard = () => {
   const { user } = useContext(Context);
@@ -11,19 +12,20 @@ const PatientDashboard = () => {
     // const [appointments, setAppointments] = useState([]);
     const [upcommingAppointments, setUpcommingAppointments] = useState([]);
     const [reports, setReports] = useState([]);
-    
+    const [appointmentsLoading, setAppointmentsLoading] = useState(true);
+    const [reportsLoading, setReportsLoading] = useState(true);
     useEffect(() => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
         withCredentials: true 
       });
-      // setAppointments(response.data.appointments);
       setUpcommingAppointments(response.data.upcommingAppointments)
-      // console.log(response.data.appointments);
     } catch (error) {
       console.log(error.message);
       toast.error(error.response?.data?.message || 'Failed to fetch appointments');
+    } finally {
+      setAppointmentsLoading(false);
     }
   };
   fetchPosts();
@@ -36,11 +38,12 @@ useEffect(() => {
       const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
         withCredentials: true
       });
-      // console.log(response.data.reports);
       setReports(response.data.reports);
     } catch (error) {
       console.log(error.message);
-      toast.error(error.response?.data?.message || 'Failed to fetch appointments');
+      toast.error(error.response?.data?.message || 'Failed to fetch reports');
+    } finally {
+      setReportsLoading(false);
     }
   }
   fetchReport();
@@ -125,6 +128,7 @@ console.log("reports", reports);
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Upcoming Appointments */}
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
@@ -135,31 +139,45 @@ console.log("reports", reports);
               </div>
             </div>
             <div className="p-6">
-              <div className="space-y-4">
-                {upcommingAppointments.map((appointment) => (
-                  <div key={appointment._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{`Dr. `+appointment.doctorId.firstName + ` ` + appointment.doctorId.lastName}</p>
-                        <p className="text-sm text-gray-600">{appointment.department}</p>
-                        <p className="text-xs text-gray-500">{new Date(appointment.a_date).toLocaleDateString()}</p>
-                      </div>
+              {appointmentsLoading ? (
+                <Skeleton type="table" rows={3} />
+              ) : upcommingAppointments.length === 0 ? (
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900 mb-3">No Upcoming Appointments</p>
+                      <p className="text-sm text-gray-600 pb-3">You do not have any upcoming appointments at the moment.</p>
+                      <p className="text-xs text-gray-500">Schedule a new appointment to see it here.</p>
                     </div>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      appointment.status === 'accepted' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {appointment.status}
-                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {upcommingAppointments.map((appointment) => (
+                    <div key={appointment._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-900">{`Dr. `+appointment.doctorId.firstName + ` ` + appointment.doctorId.lastName}</p>
+                          <p className="text-sm text-gray-600">{appointment.department}</p>
+                          <p className="text-xs text-gray-500">{new Date(appointment.a_date).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {appointment.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -174,27 +192,41 @@ console.log("reports", reports);
               </div>
             </div>
             <div className="p-6">
-              <div className="space-y-4">
-                {reports.map((report) => (
-                  <div key={report.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{report.reportName}</p>
-                        <p className="text-sm text-gray-600">{report.doctor}</p>
-                        <p className="text-xs text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</p>
-                      </div>
+              {reportsLoading ? (
+                <Skeleton type="table" rows={3} />
+              ) : reports.length === 0 ? (
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900 mb-3">No Reports Available</p>
+                      <p className="text-sm text-gray-600 pb-3">You do not have any medical reports at the moment. Once a doctor uploads a report, it will appear here for your review.</p>
+                      <p className="text-xs text-gray-500">Please check back later or contact the hospital administration if you believe this is an error.</p>
                     </div>
-                    <button onClick={() => navigate(`/patient/report/${report._id}`)} className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100">
-                      View
-                    </button>
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {reports.map((report) => (
+                    <div key={report._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-900">{report.reportName}</p>
+                          <p className="text-sm text-gray-600">Dr. {report.doctorId?.firstName} {report.doctorId?.lastName}</p>
+                          <p className="text-xs text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => navigate(`/patient/report/${report._id}`)} className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100">
+                        View
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

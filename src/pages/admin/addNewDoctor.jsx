@@ -20,15 +20,13 @@ const AddNewDoctor = () => {
   const navigate = useNavigate();
 
   const departments = [
-    'Pediatrics',
-    'Orthopedics', 
     'Cardiology',
-    'Neurology',
-    'Oncology',
-    'Radiology',
-    'Physical Therapy',
-    'Dermatology',
-    'ENT'
+    "Dermatology",
+    "Neurology",
+    "Pediatrics",
+    "Oncology",
+    "Orthopedics",
+    "ENT"
   ];
 
   const handleInputChange = (e) => {
