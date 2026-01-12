@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Context } from '../../main';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const DoctorReports = () => {
   const { user } = useContext(Context);
@@ -10,21 +11,31 @@ const DoctorReports = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+  if (user?._id) {
     fetchReports();
-  }, []);
+  }
+}, [user?._id]);
+
+const id= user?._id;
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
+      const response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${id}`, {
         withCredentials: true
       });
       setReports(response.data.reports || []);
-    } catch (error) {
-      console.error('Error fetching reports:', error);
-    } finally {
+    } 
+    catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message
+      );
+    }
+    finally {
       setLoading(false);
     }
   };
+
 
   if (loading) {
     return (

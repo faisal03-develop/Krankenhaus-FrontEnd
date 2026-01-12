@@ -21,7 +21,7 @@ import axios from 'axios'
 import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
 import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
-import ReportView from './pages/patient/ReportView.jsx';
+import ReportView from './components/ReportView.jsx';
 import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx';
 import PatientAppointments from './pages/patient/AppointmentView.jsx';
@@ -114,9 +114,9 @@ const AppContent = () => {
           />
           <Route path='*' element={<NotFound />} />
           <Route path='/patient/report/:reportId' element={
-            <ProtectedRoute requiredRole="patient">
+            // <ProtectedRoute requiredRole="patient" >
               <ReportView />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           } />
           <Route path='/doctor/reports' element={
             <ProtectedRoute requiredRole="doctor">

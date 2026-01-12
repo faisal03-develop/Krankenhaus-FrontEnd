@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Context } from '../../main';
+import { Context } from '../main';
 
 const ReportView = () => {
     // const {user} = useContext(Context);
