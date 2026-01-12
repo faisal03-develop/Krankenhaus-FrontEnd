@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import {isNotPastDate} from "../utils/date/dateUtils"
 
 const AppointmentForm = () => {
-  const [department, setDepartment] = useState('Select Department');
+  const [department, setDepartment] = useState('dummy');
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [doctor, setDoctor] = useState([])
   const { isAuthenticated, user } = useContext(Context);
@@ -107,8 +107,8 @@ const handleSelect = (e) => {
         address: '',
         hasVisited: false
       }); 
-      setDepartment("");        // ✅ reset department
-      setSelectedDoctor("");    // ✅ reset selected doctor
+      setDepartment("");
+      setSelectedDoctor("");
       setDoctor([]);
     }
     catch(error){

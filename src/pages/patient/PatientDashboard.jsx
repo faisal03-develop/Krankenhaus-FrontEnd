@@ -129,7 +129,7 @@ console.log("reports", reports);
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Upcoming Appointments</h2>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button onClick={()=>{navigate('/patient/appointments')}} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View All
                 </button>
               </div>
