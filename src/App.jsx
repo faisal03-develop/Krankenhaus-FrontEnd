@@ -24,14 +24,14 @@ import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
 import ReportView from './components/ReportView.jsx';
 import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx';
-import PatientAppointments from './pages/patient/AppointmentView.jsx';
+import PatientAppointments from './pages/patient/Appointments.jsx';
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
   const location = useLocation();
   const hideNavbarRoutes = ['/login', '/register'];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname) && user?.role !== 'admin' ;
-
+  const showFooter = !hideNavbarRoutes.includes(location.pathname) && !isAuthenticated;
   useEffect(() => {
     const fetchUser = () =>{
         axios
@@ -113,7 +113,7 @@ const AppContent = () => {
           }
           />
           <Route path='*' element={<NotFound />} />
-          <Route path='/patient/report/:reportId' element={
+          <Route path='/report/:reportId' element={
             // <ProtectedRoute requiredRole="patient" >
               <ReportView />
             // </ProtectedRoute>
@@ -130,7 +130,7 @@ const AppContent = () => {
           } />
         </Routes>
       </main>
-      {(!isAuthenticated) && <Footer />}
+            {showFooter && <Footer />}
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
     </>

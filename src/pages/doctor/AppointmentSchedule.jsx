@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AppointmentSchedule = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('all');
   const [limit, setLimit] = useState(10);
+  const navigate = useNavigate();
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [limit,status]);
 
   const fetchAppointments = async () => {
     try {
@@ -32,6 +34,7 @@ const AppointmentSchedule = () => {
     );
   }
 
+  // console.log(': ',limit)
   return (
     <div className="min-h-screen bg-gray-100 py-8 pt-20">
       <div className="max-w-7xl mx-auto px-4">
@@ -89,25 +92,44 @@ const AppointmentSchedule = () => {
                         {appointment.patientId.phone}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        Dr. {appointment.doctor.firstName}
+                        Dr. {appointment.doctorId.firstName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(appointment.a_date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                            appointment.status === 'completed' ? 'bg-cyan-100 text-blue-600':
+                          appointment.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+                            appointment.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
+                            appointment.status === 'completed' ? 'bg-green-100 text-green-600':
                             'bg-red-100 text-red-800'
                         }`}>
                           {appointment.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-blue-600 hover:text-blue-900 mr-3">
+                        {appointment.status === 'completed' && (
+                          <button onClick={()=>{
+                            navigate(`/report/${appointment._id}`)
+                          }} className="text-green-600 hover:text-green-900 mr-3">
+                            View Report
+                          </button>
+                        )}
+                        {appointment.status === 'accepted' && (
+                          <button onClick={()=>{
+                            navigate(`/doctor/report/${appointment._id}`)
+                          }} className="text-blue-600 hover:text-blue-900 mr-3">
+                            Generate Report
+                          </button>
+                        )}
+                        {appointment.status === 'pending' && (
+                          <button className="text-gray-600 hover:text-gray-900 mr-3">
+                            Wait for Approval
+                          </button>
+                        )}
+                        {/* <button className="text-blue-600 hover:text-blue-900 mr-3">
                           Generate Report
-                        </button>
+                        </button> */}
                       </td>
                     </tr>
                   ))
@@ -116,6 +138,11 @@ const AppointmentSchedule = () => {
             </table>
           </div>
         </div>
+            <div className='flex justify-center mt-6'>
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
+              Load More
+            </button>
+            </div>
       </div>
     </div>
   );

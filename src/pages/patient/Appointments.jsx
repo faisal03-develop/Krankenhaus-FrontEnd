@@ -6,17 +6,22 @@ const AppointmentView = () => {
   const { user } = useContext(Context);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [status, setStatus] = useState('all');
+  const [limit, setLimit] = useState(10);
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [limit]);
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/appointment/patient/appointments', {
+      const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
+        params:{
+          status,limit
+        },
         withCredentials: true
       });
-      setAppointments(response.data.appointments || []);
+      // console.log(response.data);
+      setAppointments(response.data.upcommingAppointments || []);
     } catch (error) {
       console.error('Error fetching appointments:', error);
     } finally {
@@ -63,11 +68,11 @@ const AppointmentView = () => {
                   appointments.map((appointment) => (
                     <tr key={appointment._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(appointment.appointment_date).toLocaleDateString()}
+                        {new Date(appointment.a_date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          Dr. {appointment.doctor_firstName} {appointment.doctor_lastName}
+                          Dr. {appointment.doctorId.firstName} {appointment.doctorId.lastName}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -75,8 +80,9 @@ const AppointmentView = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                          appointment.status === 'Accepted' ? 'bg-green-100 text-green-800' :
+                          appointment.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+                          appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          appointment.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
                           'bg-red-100 text-red-800'
                         }`}>
                           {appointment.status}
@@ -92,6 +98,11 @@ const AppointmentView = () => {
             </table>
           </div>
         </div>
+        <div className='flex justify-center mt-6'>
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
+              Load More
+            </button>
+            </div>
       </div>
     </div>
   );

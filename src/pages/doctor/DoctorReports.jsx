@@ -102,7 +102,7 @@ const id= user?._id;
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button 
-                          onClick={() => navigate(`/patient/report/${report._id}`)}
+                          onClick={() => navigate(`/report/${report._id}`)}
                           className="text-blue-600 hover:text-blue-900 mr-3"
                         >
                           View

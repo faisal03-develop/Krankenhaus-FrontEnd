@@ -149,14 +149,7 @@ const DoctorDashboard = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {appointments.map((appointment) => (
-                  <div key={appointment._id} onClick={()=>{
-                    if(appointment.status === 'accepted')
-                        {navigateTo(`/doctor/report/${appointment._id}`)
-                      }
-                    else{
-                      toast.info('Appointment not accepted yet');
-                    }
-                      }} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={appointment._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center">
                           <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,17 +164,39 @@ const DoctorDashboard = () => {
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        appointment.status === 'pending' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        appointment.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
+                        appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        appointment.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+                        'bg-red-100 text-red-800'
                       }`}>
                         {appointment.status}
                       </span>
-                      <button className="text-blue-600 hover:text-blue-700">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
+                        {appointment.status === 'accepted' && (
+                        <button onClick={()=>{
+                        {navigateTo(`/doctor/report/${appointment._id}`)}
+                        }} 
+                        className="text-blue-600 hover:text-blue-700">
+                          Generate Report
+                        </button>
+                        )}
+                        {appointment.status === 'completed' && (
+                        <button onClick={()=>{
+                        {navigateTo(`/report/${appointment._id}`)}
+                        }}  className="text-green-600 hover:text-green-700">
+                          View Report
+                        </button>
+                        )}
+                        {appointment.status === 'pending' && (
+                        <button onClick={()=>{toast.info('Appointment yet to be Approved by Admin')}} className="text-gray-600 hover:text-gray-700 disabled" >
+                          Approval Pending
+                        </button>
+                        )}
+                        
+                        {appointment.status === 'rejected' && (
+                        <button onClick={()=>{toast.error('Appointment Rejected by Admin')}} className="text-red-600 hover:text-red-700 disabled" >
+                          Approval Pending
+                        </button>
+                        )}
                     </div>
                   </div>
                 ))}
@@ -290,7 +305,7 @@ const DoctorDashboard = () => {
             <p className="text-sm opacity-90">Check lab results</p>
           </button>
 
-          <button className="p-6 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-colors">
+          <button onClick={()=>{navigateTo('/doctor/schedule')}} className="p-6 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-colors">
             <div className="flex items-center justify-center mb-3">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

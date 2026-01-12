@@ -9,7 +9,9 @@ import Skeleton from '../../components/Skeleton';
 const PatientDashboard = () => {
   const { user } = useContext(Context);
   const navigate = useNavigate();
-    // const [appointments, setAppointments] = useState([]);
+    const [totalAppointments, setTotalAppointments] = useState([]);
+    const [limit, setLimit] = useState(5);
+    const [status, setStatus] = useState('pending');
     const [upcommingAppointments, setUpcommingAppointments] = useState([]);
     const [reports, setReports] = useState([]);
     const [appointmentsLoading, setAppointmentsLoading] = useState(true);
@@ -17,10 +19,12 @@ const PatientDashboard = () => {
     useEffect(() => {
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments', {
-        withCredentials: true 
-      });
-      setUpcommingAppointments(response.data.upcommingAppointments)
+      const response = await axios.get('http://localhost:8000/api/v1/appointment/getmyappointments',
+       { params:{status, limit},
+         withCredentials: true } 
+        );
+      setUpcommingAppointments(response.data.upcommingAppointments);
+      setTotalAppointments(response.data.totalAppointments);
     } catch (error) {
       console.log(error.message);
       toast.error(error.response?.data?.message || 'Failed to fetch appointments');
@@ -50,15 +54,7 @@ useEffect(() => {
 }, [])
 
 
-
-// console.log("kk",appointments);
 console.log("reports", reports);
-
-  // const medications = [
-  //   { id: 1, name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', prescribedBy: 'Dr. Sarah Johnson' },
-  //   { id: 2, name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', prescribedBy: 'Dr. Michael Chen' }
-  // ];
-
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -77,8 +73,8 @@ console.log("reports", reports);
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
-                <p className="text-2xl font-bold text-gray-900">{upcommingAppointments.length}</p>
+                <p className="text-sm font-medium text-gray-600">Total Appointments</p>
+                <p className="text-2xl font-bold text-gray-900">{totalAppointments}</p>
               </div>
             </div>
           </div>
@@ -168,8 +164,9 @@ console.log("reports", reports);
                         </div>
                       </div>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        appointment.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
+                        appointment.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+                        appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
                         'bg-red-100 text-red-800'
                       }`}>
                         {appointment.status}

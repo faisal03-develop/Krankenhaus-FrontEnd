@@ -48,7 +48,7 @@ const ReportView = () => {
     );
   }
 
-  console.log('Report on the view Page: ',report)
+  // console.log('Report on the view Page: ',report)
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 pt-20">
