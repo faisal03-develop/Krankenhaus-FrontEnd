@@ -7,10 +7,11 @@ const AppointmentSchedule = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('all');
   const [limit, setLimit] = useState(10);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     fetchAppointments();
-  }, [limit,status]);
+  }, [status]);
 
   const fetchAppointments = async () => {
     try {
@@ -19,11 +20,17 @@ const AppointmentSchedule = () => {
          withCredentials: true }    
       );
       setAppointments(response.data.appointments || []);
+      setHasMore(response.data.hasMore);
     } catch (error) {
       console.error('Error fetching appointments:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLoadMore = () => {
+    setLimit(prev => prev + 10);
+    fetchAppointments();
   };
 
   if (loading) {
@@ -139,8 +146,8 @@ const AppointmentSchedule = () => {
           </div>
         </div>
             <div className='flex justify-center mt-6'>
-            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
-              Load More
+            <button onClick={handleLoadMore} className='bg-blue-300 text-blue-800' disabled={!hasMore}>
+            {hasMore ? "Load More" : "No More Appointments"}
             </button>
             </div>
       </div>

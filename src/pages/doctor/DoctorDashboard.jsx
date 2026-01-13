@@ -20,7 +20,7 @@ const DoctorDashboard = () => {
          withCredentials: true }
       );
       setAppointments(response.data.appointments || []);
-      setTotalAppointment(response.data.totalAppointment || 0);
+      setTotalAppointment(response.data.totalMatchingAppointments || 0);
       setPendingTasks(response.data.pendingTasks || 0);
       
       if (!response.data.appointments || response.data.appointments.length === 0) {

@@ -278,8 +278,8 @@ const AdminDashboard = () => {
                 >
                   Add New Doctor
                 </button>
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md text-sm font-medium">
-                  View Reports
+                <button onClick={() => navigateTo('/admin/addnewadmin')} className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md text-sm font-medium">
+                  Add New Admin
                 </button>
                 <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-sm font-medium">
                   System Settings

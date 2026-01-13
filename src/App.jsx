@@ -25,6 +25,7 @@ import ReportView from './components/ReportView.jsx';
 import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx';
 import PatientAppointments from './pages/patient/Appointments.jsx';
+import AddNewAdmin from './pages/admin/addNewAdmin.jsx';
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
@@ -126,6 +127,11 @@ const AppContent = () => {
           <Route path='/patient/appointments' element={
             <ProtectedRoute requiredRole="patient">
               <PatientAppointments />
+            </ProtectedRoute>
+          } />
+          <Route path='/admin/addnewadmin' element={
+            <ProtectedRoute requiredRole="admin">
+              <AddNewAdmin />
             </ProtectedRoute>
           } />
         </Routes>

@@ -16,7 +16,6 @@ const Register = () => {
     dob: '',
     gender: '',
     password: '',
-    confirmPassword: '',
     role: 'patient'
   });
 
@@ -209,20 +208,6 @@ const Register = () => {
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm Password *
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
               </div>
             </div>
 
@@ -230,7 +215,7 @@ const Register = () => {
               type="submit"
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              <span className='text-blue-600'>Create Account </span>
+              <span className='text-white'>Create Account </span>
             </button>
           </form>
 
