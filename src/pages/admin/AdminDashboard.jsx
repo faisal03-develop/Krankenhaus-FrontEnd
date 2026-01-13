@@ -18,20 +18,22 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [limit, setLimit] = useState(10);
   const [appointments, setAppointments] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedStatus, setSelectedStatus] = useState('')
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [limit]);
 
   const fetchDashboardData = async () => {
     try {
       // Fetch users, appointments, and other data
       // This is a placeholder - adjust API endpoints as needed
       const usersRes = await axios.get('http://localhost:8000/api/v1/user/getallusers', { withCredentials: true });
-      const appointmentsRes = await axios.get('http://localhost:8000/api/v1/appointment/getallappointments', { withCredentials: true });
+      const appointmentsRes = await axios.get('http://localhost:8000/api/v1/appointment/getallappointments', { 
+        params: {limit},withCredentials: true });
       
       if (usersRes.data.users) {
         setUsers(usersRes.data.users);
@@ -43,7 +45,7 @@ const AdminDashboard = () => {
           totalUsers: usersRes.data.users.length,
           totalDoctors: doctors.length,
           totalPatients: patients.length,
-          totalAppointments: appointmentsRes.data.appointments?.length || 0
+          totalAppointments: appointmentsRes.data.totalAppointments || 0
         });
       }
       
@@ -128,9 +130,9 @@ const AdminDashboard = () => {
       <td className="px-4 py-3">{doctor.phone}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          doctor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+           'bg-green-100 text-green-800'
         }`}>
-          {doctor.status || 'Active'}
+          {doctor.status || 'Active' }
         </span>
       </td>
     </tr>
@@ -145,7 +147,7 @@ const AdminDashboard = () => {
       <td className="px-4 py-3">{patient.phone}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          patient.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        'bg-green-100 text-green-800'
         }`}>
           {patient.status || 'Active'}
         </span>
@@ -161,9 +163,9 @@ const AdminDashboard = () => {
       <td className="px-4 py-3">{new Date(appointment.a_date).toLocaleDateString()}</td>
       <td className="px-4 py-3">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          appointment.status === 'accepted' ? 'bg-green-100 text-green-800' :
-          appointment.status === 'completed' ? 'bg-cyan-100 text-blue-600':
+          appointment.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+          appointment.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
+          appointment.status === 'completed' ? 'bg-green-100 text-green-600':
           'bg-red-100 text-red-800'
         }`}>
           {appointment.status}
@@ -182,6 +184,13 @@ const AdminDashboard = () => {
           <option value="completed">Completed</option>
         </select>
         <button onClick={() => handleUpdateStatus(appointment._id,selectedStatus)} className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-2">Update Status</button>
+        {appointment.status === 'completed' && (
+            <button onClick={()=>{
+            {navigateTo(`/report/${appointment._id}`)}
+            }}  className="text-green-600 hover:text-green-700">
+              View Report
+            </button>
+            )}
       </td>
     </tr>
   );
@@ -282,9 +291,9 @@ const AdminDashboard = () => {
 
         {/* Doctors Tab */}
         {activeTab === 'doctors' && (
-          <div className="bg-white rounded-lg shadow-md">
+          <div className="bg-white rounded-lg shadow-md pb-6">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Doctors</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -304,6 +313,12 @@ const AdminDashboard = () => {
                 </tbody>
               </table>
             </div>
+            
+            <div className='flex justify-center mt-6'>
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
+              Load More
+            </button>
+            </div>
           </div>
         )}
 
@@ -311,7 +326,7 @@ const AdminDashboard = () => {
         
         {/* Patients Tab */}
         {activeTab === 'patients' && (
-          <div className="bg-white rounded-lg shadow-md">
+          <div className="bg-white rounded-lg shadow-md pb-5">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Patient Management</h2>
             </div>
@@ -332,12 +347,17 @@ const AdminDashboard = () => {
                 </tbody>
               </table>
             </div>
+            <div className='flex justify-center mt-6'>
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
+              Load More
+            </button>
+            </div>
           </div>
         )}
 
         {/* Appointments Tab */}
         {activeTab === 'appointments' && (
-          <div className="bg-white rounded-lg shadow-md">
+          <div className="bg-white rounded-lg shadow-md pb-3">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Appointment Management</h2>
             </div>
@@ -350,7 +370,7 @@ const AdminDashboard = () => {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -359,6 +379,11 @@ const AdminDashboard = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className='flex justify-center mt-6'>
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
+              Load More
+            </button>
             </div>
           </div>
         )}
