@@ -7,6 +7,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
+import AdminNavbar from './components/AdminNavbar'
 import Footer from './components/Footer'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
@@ -22,16 +23,18 @@ import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
 import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
 import ReportView from './components/ReportView.jsx';
-import DoctorReports from './pages/doctor/DoctorReports.jsx';
 import NotFound from './pages/NotFound.jsx';
 import PatientAppointments from './pages/patient/Appointments.jsx';
 import AddNewAdmin from './pages/admin/addNewAdmin.jsx';
+import Reports from './components/Reports.jsx';
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
   const location = useLocation();
   const hideNavbarRoutes = ['/login', '/register'];
-  const showNavbar = !hideNavbarRoutes.includes(location.pathname) && user?.role !== 'admin' ;
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const showNavbar = !hideNavbarRoutes.includes(location.pathname) && user?.role !== 'admin';
+  const showAdminNavbar = isAdminRoute && user?.role === 'admin';
   const showFooter = !hideNavbarRoutes.includes(location.pathname) && !isAuthenticated;
   useEffect(() => {
     const fetchUser = () =>{
@@ -58,6 +61,7 @@ const AppContent = () => {
 
   return (
     <>
+      {showAdminNavbar && <AdminNavbar />}
       {showNavbar && <Navbar />}
       <main>
         <Routes>
@@ -121,7 +125,7 @@ const AppContent = () => {
           } />
           <Route path='/doctor/reports' element={
             <ProtectedRoute requiredRole="doctor">
-              <DoctorReports />
+              <Reports />
             </ProtectedRoute>
           } />
           <Route path='/patient/appointments' element={
@@ -132,6 +136,16 @@ const AppContent = () => {
           <Route path='/admin/addnewadmin' element={
             <ProtectedRoute requiredRole="admin">
               <AddNewAdmin />
+            </ProtectedRoute>
+          } />
+          <Route path='/admin/reports' element={
+            <ProtectedRoute requiredRole="admin">
+              <Reports />
+            </ProtectedRoute>
+          } />
+          <Route path='/patient/reports' element={
+            <ProtectedRoute requiredRole="patient">
+              <Reports />
             </ProtectedRoute>
           } />
         </Routes>

@@ -18,16 +18,16 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   if (requiredRole && user?.role !== requiredRole) {
   
     if (user?.role === 'admin') {
-      toast.error('Access denied. Admins cannot access this page.');
+      toast.error('Access denied. user cannot access this page.');
       return <Navigate to="/admin/dashboard" replace />;
     } else if (user?.role === 'doctor') {
-      toast.error('Access denied. Admins cannot access this page.');
+      toast.error('Access denied. user cannot access this page.');
       return <Navigate to="/doctor/dashboard" replace />;
     } else if (user?.role === 'patient') {
-      toast.error('Access denied. Admins cannot access this page.');
+      toast.error('Access denied. user cannot access this page.');
       return <Navigate to="/patient/dashboard" replace />;
     } else {
-      toast.error('Access denied. Admins cannot access this page.');
+      toast.error('Access denied. user cannot access this page.');
       return <Navigate to="/login" replace />;
     }
   }

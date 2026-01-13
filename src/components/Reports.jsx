@@ -1,0 +1,520 @@
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { Context } from '../main';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Skeleton from './Skeleton';
+
+const Reports = () => {
+  const { user } = useContext(Context);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterDoctor, setFilterDoctor] = useState('');
+  const [filterPatient, setFilterPatient] = useState('');
+  const navigate = useNavigate();
+
+  const userRole = user?.role;
+
+  useEffect(() => {
+    if (userRole === 'admin' || user?._id) {
+      fetchReports();
+    }
+  }, [user?._id, userRole]);
+
+  const fetchReports = async () => {
+    try {
+      let response;
+      
+      if (userRole === 'admin') {
+        // Admin: Fetch all reports
+        response = await axios.get('http://localhost:8000/api/v1/report/getallreports', {
+          withCredentials: true
+        });
+        setReports(response.data.reports || []);
+      } else {
+        // Patient or Doctor: Fetch their reports
+        response = await axios.get(`http://localhost:8000/api/v1/report/getmyreports/${user._id}`, {
+          withCredentials: true
+        });
+        
+        // Filter based on role
+        if (userRole === 'patient') {
+          // Patient: Show only reports where they are the patient
+          const patientReports = response.data.reports?.filter(
+            report => report.patientId?._id === user._id
+          ) || [];
+          setReports(patientReports);
+        } else if (userRole === 'doctor') {
+          // Doctor: Show only reports they generated
+          const doctorReports = response.data.reports?.filter(
+            report => report.doctorId?._id === user._id
+          ) || [];
+          setReports(doctorReports);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Failed to fetch reports');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get unique doctors and patients for filter dropdowns
+  const uniqueDoctors = [...new Set(reports.map(r => r.doctorId?._id).filter(Boolean))].map(id => 
+    reports.find(r => r.doctorId?._id === id)?.doctorId
+  );
+  const uniquePatients = [...new Set(reports.map(r => r.patientId?._id).filter(Boolean))].map(id => 
+    reports.find(r => r.patientId?._id === id)?.patientId
+  );
+
+  // Filter reports based on search and filters
+  const filteredReports = reports.filter(report => {
+    const matchesSearch = 
+      report.reportName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.diagnosis?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.patientId?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.patientId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.doctorId?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.doctorId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.doctorId?.doctorDepartment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.patientId?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesDoctor = !filterDoctor || report.doctorId?._id === filterDoctor;
+    const matchesPatient = !filterPatient || report.patientId?._id === filterPatient;
+
+    return matchesSearch && matchesDoctor && matchesPatient;
+  });
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  // Role-based configuration
+  const getPageConfig = () => {
+    switch (userRole) {
+      case 'admin':
+        return {
+          title: 'Medical Reports',
+          subtitle: 'View and manage all medical reports in the system',
+          showDoctorFilter: true,
+          showPatientFilter: true,
+          stats: [
+            {
+              title: 'Total Reports',
+              value: reports.length,
+              icon: 'blue',
+              description: null
+            },
+            {
+              title: 'Unique Patients',
+              value: uniquePatients.length,
+              icon: 'green',
+              description: null
+            },
+            {
+              title: 'Unique Doctors',
+              value: uniqueDoctors.length,
+              icon: 'purple',
+              description: null
+            }
+          ],
+          tableColumns: ['Report Name', 'Patient', 'Doctor', 'Diagnosis', 'Created Date', 'Follow-up Date', 'Actions'],
+          emptyMessage: searchTerm || filterDoctor || filterPatient 
+            ? 'Try adjusting your filters' 
+            : 'No reports available in the system'
+        };
+      case 'doctor':
+        return {
+          title: 'My Generated Reports',
+          subtitle: `All reports generated by Dr. ${user?.firstName} ${user?.lastName}`,
+          showDoctorFilter: false,
+          showPatientFilter: true,
+          stats: [
+            {
+              title: 'Total Reports',
+              value: reports.length,
+              icon: 'blue',
+              description: null
+            },
+            {
+              title: 'Recent Reports',
+              value: reports.filter(r => {
+                const reportDate = new Date(r.createdAt);
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                return reportDate >= thirtyDaysAgo;
+              }).length,
+              icon: 'green',
+              description: 'Last 30 days'
+            },
+            {
+              title: 'Unique Patients',
+              value: uniquePatients.length,
+              icon: 'purple',
+              description: null
+            }
+          ],
+          tableColumns: ['Report Name', 'Patient', 'Diagnosis', 'Generated Date', 'Follow-up Date', 'Actions'],
+          emptyMessage: searchTerm || filterPatient 
+            ? 'Try adjusting your search or filters' 
+            : 'You haven\'t generated any reports yet'
+        };
+      case 'patient':
+        return {
+          title: 'My Medical Reports',
+          subtitle: 'View all your medical reports and test results',
+          showDoctorFilter: true,
+          showPatientFilter: false,
+          stats: [
+            {
+              title: 'Total Reports',
+              value: reports.length,
+              icon: 'blue',
+              description: null
+            },
+            {
+              title: 'Recent Reports',
+              value: reports.filter(r => {
+                const reportDate = new Date(r.createdAt);
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                return reportDate >= thirtyDaysAgo;
+              }).length,
+              icon: 'green',
+              description: 'Last 30 days'
+            },
+            {
+              title: 'Consulting Doctors',
+              value: uniqueDoctors.length,
+              icon: 'purple',
+              description: null
+            }
+          ],
+          tableColumns: ['Report Name', 'Doctor', 'Department', 'Diagnosis', 'Report Date', 'Follow-up Date', 'Actions'],
+          emptyMessage: searchTerm || filterDoctor 
+            ? 'Try adjusting your search or filters' 
+            : 'You don\'t have any medical reports yet'
+        };
+      default:
+        return null;
+    }
+  };
+
+  const config = getPageConfig();
+
+  if (!config) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
+        <div className="text-lg text-gray-500">Please log in to view reports</div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Skeleton />
+        </div>
+      </div>
+    );
+  }
+
+  const getIconColor = (color) => {
+    const colors = {
+      blue: 'bg-blue-100 text-blue-600',
+      green: 'bg-green-100 text-green-600',
+      purple: 'bg-purple-100 text-purple-600'
+    };
+    return colors[color] || colors.blue;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+          <p className="text-gray-600 mt-2">{config.subtitle}</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {config.stats.map((stat, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+              <div className="flex items-center">
+                <div className={`w-12 h-12 ${getIconColor(stat.icon)} rounded-lg flex items-center justify-center`}>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {stat.icon === 'blue' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    )}
+                    {stat.icon === 'green' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    )}
+                    {stat.icon === 'purple' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M17 20H7m10 0v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    )}
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  {stat.description && (
+                    <p className="text-xs text-gray-500 mt-1">{stat.description}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Filters and Search */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+          <div className={`grid grid-cols-1 ${config.showDoctorFilter && config.showPatientFilter ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
+            <div className={config.showDoctorFilter && config.showPatientFilter ? 'md:col-span-1' : ''}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {userRole === 'patient' ? 'Search Reports' : userRole === 'doctor' ? 'Search Reports' : 'Search'}
+              </label>
+              <input
+                type="text"
+                placeholder={
+                  userRole === 'patient' 
+                    ? 'Search by report name, diagnosis, or doctor...'
+                    : userRole === 'doctor'
+                    ? 'Search by report name, diagnosis, or patient...'
+                    : 'Search by report name, diagnosis, patient, or doctor...'
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            {config.showDoctorFilter && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Doctor</label>
+                <select
+                  value={filterDoctor}
+                  onChange={(e) => setFilterDoctor(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">All Doctors</option>
+                  {uniqueDoctors.map((doctor) => (
+                    <option key={doctor._id} value={doctor._id}>
+                      {userRole === 'patient' 
+                        ? `Dr. ${doctor.firstName} ${doctor.lastName} - ${doctor.doctorDepartment}`
+                        : `Dr. ${doctor.firstName} ${doctor.lastName}`
+                      }
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {config.showPatientFilter && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Patient</label>
+                <select
+                  value={filterPatient}
+                  onChange={(e) => setFilterPatient(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">All Patients</option>
+                  {uniquePatients.map((patient) => (
+                    <option key={patient._id} value={patient._id}>
+                      {userRole === 'doctor'
+                        ? `${patient.firstName} ${patient.lastName} - ${patient.email}`
+                        : `${patient.firstName} ${patient.lastName}`
+                      }
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Reports Table */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">
+              {userRole === 'admin' ? 'All Reports' : userRole === 'doctor' ? 'Generated Reports' : 'Your Reports'} ({filteredReports.length})
+            </h2>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Report Name
+                  </th>
+                  {userRole !== 'doctor' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {userRole === 'patient' ? 'Doctor' : 'Patient'}
+                    </th>
+                  )}
+                  {userRole === 'admin' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Doctor
+                    </th>
+                  )}
+                  {userRole === 'patient' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Department
+                    </th>
+                  )}
+                  {userRole === 'doctor' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Patient
+                    </th>
+                  )}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Diagnosis
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {userRole === 'doctor' ? 'Generated Date' : userRole === 'patient' ? 'Report Date' : 'Created Date'}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Follow-up Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredReports.length === 0 ? (
+                  <tr>
+                    <td colSpan={config.tableColumns.length} className="px-6 py-12 text-center">
+                      <div className="text-gray-500">
+                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p className="mt-2 text-sm font-medium">No reports found</p>
+                        <p className="text-xs text-gray-400 mt-1">{config.emptyMessage}</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredReports.map((report) => (
+                    <tr key={report._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {report.reportName}
+                        </div>
+                      </td>
+                      {userRole === 'admin' && (
+                        <>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {report.patientId?.firstName} {report.patientId?.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {report.patientId?.email}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              Dr. {report.doctorId?.firstName} {report.doctorId?.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {report.doctorId?.doctorDepartment}
+                            </div>
+                          </td>
+                        </>
+                      )}
+                      {userRole === 'patient' && (
+                        <>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              Dr. {report.doctorId?.firstName} {report.doctorId?.lastName}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">
+                              {report.doctorId?.doctorDepartment}
+                            </div>
+                          </td>
+                        </>
+                      )}
+                      {userRole === 'doctor' && (
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {report.patientId?.firstName} {report.patientId?.lastName}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {report.patientId?.email}
+                          </div>
+                        </td>
+                      )}
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900 max-w-xs truncate" title={report.diagnosis}>
+                          {report.diagnosis}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(report.createdAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(report.followUpDate)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => navigate(`/report/${report._id}`)}
+                          className="text-blue-600 hover:text-blue-900 mr-4 transition-colors"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => {
+                            navigate(`/report/${report._id}`);
+                            setTimeout(() => window.print(), 500);
+                          }}
+                          className="text-green-600 hover:text-green-900 transition-colors"
+                        >
+                          Print
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Help Text */}
+        {reports.length > 0 && (
+          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex">
+              <div className="shrink-0">
+                <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-blue-700">
+                  <strong>Tip:</strong> {
+                    userRole === 'patient'
+                      ? 'Click "View Details" to see the complete report including symptoms, observations, and doctor\'s remarks. You can also print your reports for your records.'
+                      : userRole === 'doctor'
+                      ? 'Click "View Details" to see the complete report including symptoms, observations, and remarks. You can also print reports for your records or to share with patients.'
+                      : 'Click "View Details" to see complete report information. You can also print reports for administrative purposes.'
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Reports;

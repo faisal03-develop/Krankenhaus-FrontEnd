@@ -10,32 +10,26 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
   const handleLogout = () => {
-    if(user?.role === 'doctor') {
-      axios.get('http://localhost:8000/api/v1/user/doctor/logout', { withCredentials: true })
-      .then((res) => {
-        console.log(res.data.message);
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-    setUser({});
+    if (!user?.role) return; // Safety check
+  
+    axios
+      .get('http://localhost:8000/api/v1/user/logout', {
+        params: { role: user.role }, // Send role to backend
+        withCredentials: true,
       })
-      .catch((error) => {
-        console.error('Logout failed:', error);
-      });
-      return;
-    }
-    axios.get('http://localhost:8000/api/v1/user/user/logout', { withCredentials: true })
       .then((res) => {
         console.log(res.data.message);
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-    setUser({});
+        // Clear frontend state
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        setUser({});
       })
       .catch((error) => {
         console.error('Logout failed:', error);
       });
   };
+  
   
 
   return (
@@ -57,9 +51,17 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {isAuthenticated &&  user?.role === 'doctor' ? (
-              <Link to="/doctor/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Dashboard
-            </Link>
+              <>
+                <Link to="/doctor/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Dashboard
+                </Link>
+                <Link to="/doctor/schedule" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Schedule
+                </Link>
+                <Link to="/doctor/reports" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Reports
+                </Link>
+              </>
             ) : null}
             {isAuthenticated &&  user?.role === 'patient' ? (
               <Link to="/patient/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
@@ -73,9 +75,14 @@ const Navbar = () => {
             ) : null}
 
             {isAuthenticated &&  user?.role !== 'admin' && user?.role !== 'doctor' ? (
-              <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Appointment
-              </Link>
+              <>
+                <Link to="/appointment" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Appointment
+                </Link>
+                <Link to="/patient/reports" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Reports
+                </Link>
+              </>
             ) : null}
 
             {user?.role !== 'admin' && user?.role !== 'doctor' && !isAuthenticated ? (
@@ -139,20 +146,57 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link 
-                to="/" 
-                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                to="/appointment" 
-                className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Appointment
-              </Link>
+              {isAuthenticated && user?.role === 'doctor' ? (
+                <>
+                  <Link 
+                    to="/doctor/dashboard" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link 
+                    to="/doctor/schedule" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Schedule
+                  </Link>
+                  <Link 
+                    to="/doctor/reports" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Reports
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    to="/" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link 
+                    to="/appointment" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Appointment
+                  </Link>
+                  {isAuthenticated && user?.role === 'patient' && (
+                    <Link 
+                      to="/patient/reports" 
+                      className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Reports
+                    </Link>
+                  )}
+                </>
+              )}
               <Link 
                 to="/about" 
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium"

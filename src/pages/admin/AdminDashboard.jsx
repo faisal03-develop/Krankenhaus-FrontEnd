@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     totalAppointments: 0
   });
   const [users, setUsers] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -31,7 +32,7 @@ const AdminDashboard = () => {
     try {
       // Fetch users, appointments, and other data
       // This is a placeholder - adjust API endpoints as needed
-      const usersRes = await axios.get('http://localhost:8000/api/v1/user/getallusers', { withCredentials: true });
+      const usersRes = await axios.get('http://localhost:8000/api/v1/user/getallusers', { params: { limit:limit }, withCredentials: true });
       const appointmentsRes = await axios.get('http://localhost:8000/api/v1/appointment/getallappointments', { 
         params: {limit},withCredentials: true });
       
@@ -39,10 +40,11 @@ const AdminDashboard = () => {
         setUsers(usersRes.data.users);
         const doctors = usersRes.data.users.filter(user => user.role === 'doctor');
         const patients = usersRes.data.users.filter(user => user.role === 'patient');
+        setHasMore(usersRes.data.hasMore);
         setPatients(patients);
         setDoctors(doctors);
         setStats({
-          totalUsers: usersRes.data.users.length,
+          totalUsers: usersRes.data.totalUsers,
           totalDoctors: doctors.length,
           totalPatients: patients.length,
           totalAppointments: appointmentsRes.data.totalAppointments || 0
@@ -83,8 +85,8 @@ const AdminDashboard = () => {
  const handleLogout = async () => {
   try {
     await axios.get(
-      'http://localhost:8000/api/v1/user/admin/logout',
-      { withCredentials: true }
+      'http://localhost:8000/api/v1/user/logout',
+      { params: { role: 'admin' }, withCredentials: true }
     );
 
     toast.success('Logged out successfully');
@@ -196,22 +198,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gray-100 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation Tabs */}
         <div className="mb-8">
@@ -271,7 +258,7 @@ const AdminDashboard = () => {
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button 
                   onClick={() => navigateTo('/admin/addnew')}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md text-sm font-medium"
@@ -280,6 +267,12 @@ const AdminDashboard = () => {
                 </button>
                 <button onClick={() => navigateTo('/admin/addnewadmin')} className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md text-sm font-medium">
                   Add New Admin
+                </button>
+                <button 
+                  onClick={() => navigateTo('/admin/reports')} 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-md text-sm font-medium"
+                >
+                  View All Reports
                 </button>
                 <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-sm font-medium">
                   System Settings
@@ -315,8 +308,8 @@ const AdminDashboard = () => {
             </div>
             
             <div className='flex justify-center mt-6'>
-            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
-              Load More
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800' disabled={!hasMore}>
+              {hasMore ? "Load More" : "No More Doctors"}
             </button>
             </div>
           </div>
@@ -348,8 +341,8 @@ const AdminDashboard = () => {
               </table>
             </div>
             <div className='flex justify-center mt-6'>
-            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
-              Load More
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800' disabled={!hasMore}>
+              {hasMore ? "Load More" : "No More Patients"}
             </button>
             </div>
           </div>
@@ -381,8 +374,8 @@ const AdminDashboard = () => {
               </table>
             </div>
             <div className='flex justify-center mt-6'>
-            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800'>
-              Load More
+            <button onClick={()=>{setLimit(limit+10)}} className='bg-blue-300 text-blue-800' disabled={!hasMore}>
+              {hasMore ? "Load More" : "No More Appointments"}
             </button>
             </div>
           </div>

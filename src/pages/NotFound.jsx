@@ -24,7 +24,7 @@ const NotFound = () => {
             onClick={() => navigate('/')}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
           >
-            (${!isAuthenticated} && Go Home)
+            Go Home
           </button>
         </div>
       </div>
