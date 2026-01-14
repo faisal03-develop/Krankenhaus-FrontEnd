@@ -11,7 +11,7 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterEmail, setFilterEmail] = useState('');
   const [selectedMessage, setSelectedMessage] = useState(null);
-  const [viewMode, setViewMode] = useState('table'); // 'table' or 'card'
+  // const [viewMode, setViewMode] = useState('table'); // 'table' or 'card'
 
   useEffect(() => {
     fetchMessages();
@@ -31,7 +31,6 @@ const Messages = () => {
     }
   };
 
-  // Get unique emails for filter dropdown
   const uniqueEmails = [...new Set(messages.map(m => m.email).filter(Boolean))];
 
   // Filter messages based on search
@@ -59,13 +58,13 @@ const Messages = () => {
     });
   };
 
-  const handleEmailClick = (email) => {
-    window.location.href = `mailto:${email}`;
-  };
+  // const handleEmailClick = (email) => {
+  //   window.location.href = `mailto:${email}`;
+  // };
 
-  const handlePhoneClick = (phone) => {
-    window.location.href = `tel:${phone}`;
-  };
+  // const handlePhoneClick = (phone) => {
+  //   window.location.href = `tel:${phone}`;
+  // };
 
   if (loading) {
     return (
@@ -191,7 +190,7 @@ const Messages = () => {
               </div>
             </div>
             <div className="flex items-end">
-              <div className="flex bg-gray-100 rounded-lg p-1">
+              {/* <div className="flex bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode('table')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -212,13 +211,13 @@ const Messages = () => {
                 >
                   Cards
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
 
         {/* Messages Display */}
-        {viewMode === 'table' ? (
+        {/* {viewMode === 'table' ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
@@ -306,7 +305,7 @@ const Messages = () => {
                             View
                           </button>
                           <button
-                            onClick={() => handleEmailClick(message.email)}
+                            // onClick={() => handleEmailClick(message.email)}
                             className="text-green-600 hover:text-green-900 transition-colors"
                           >
                             Reply
@@ -319,7 +318,7 @@ const Messages = () => {
               </table>
             </div>
           </div>
-        ) : (
+        ) : ( */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMessages.length === 0 ? (
               <div className="col-span-full">
@@ -359,7 +358,7 @@ const Messages = () => {
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-1">Email</p>
                       <button
-                        onClick={() => handleEmailClick(message.email)}
+                        // onClick={() => handleEmailClick(message.email)}
                         className="text-sm text-blue-600 hover:text-blue-900 hover:underline"
                       >
                         {message.email}
@@ -368,7 +367,7 @@ const Messages = () => {
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-1">Phone</p>
                       <button
-                        onClick={() => handlePhoneClick(message.phone)}
+                        // onClick={() => handlePhoneClick(message.phone)}
                         className="text-sm text-gray-900 hover:text-blue-600 hover:underline"
                       >
                         {message.phone}
@@ -388,7 +387,7 @@ const Messages = () => {
                       View Full
                     </button>
                     <button
-                      onClick={() => handleEmailClick(message.email)}
+                      // onClick={() => handleEmailClick(message.email)}
                       className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
                     >
                       Reply
@@ -398,7 +397,7 @@ const Messages = () => {
               ))
             )}
           </div>
-        )}
+        
 
         {/* Message Detail Modal */}
         {selectedMessage && (
@@ -429,7 +428,7 @@ const Messages = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-500 mb-1">Email</p>
                     <button
-                      onClick={() => handleEmailClick(selectedMessage.email)}
+                      // onClick={() => handleEmailClick(selectedMessage.email)}
                       className="text-base text-blue-600 hover:text-blue-900 hover:underline"
                     >
                       {selectedMessage.email}
@@ -438,7 +437,7 @@ const Messages = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-500 mb-1">Phone</p>
                     <button
-                      onClick={() => handlePhoneClick(selectedMessage.phone)}
+                      // onClick={() => handlePhoneClick(selectedMessage.phone)}
                       className="text-base text-gray-900 hover:text-blue-600 hover:underline"
                     >
                       {selectedMessage.phone}
@@ -462,10 +461,10 @@ const Messages = () => {
                   Close
                 </button>
                 <button
-                  onClick={() => {
-                    handleEmailClick(selectedMessage.email);
-                    setSelectedMessage(null);
-                  }}
+                  // onClick={() => {
+                  //   handleEmailClick(selectedMessage.email);
+                  //   setSelectedMessage(null);
+                  // }}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                 >
                   Reply via Email

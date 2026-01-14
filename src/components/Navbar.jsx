@@ -10,24 +10,39 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  const handleLogout = () => {
-    if (!user?.role) return; // Safety check
+  // const handleLogout = () => {
+  //   if (!user?.role) return;
   
-    axios
-      .get('http://localhost:8000/api/v1/user/logout', {
-        params: { role: user.role }, // Send role to backend
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data.message);
-        // Clear frontend state
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setUser({});
-      })
-      .catch((error) => {
-        console.error('Logout failed:', error);
-      });
+  //   axios
+  //     .get('http://localhost:8000/api/v1/user/logout', {
+  //       params: { role: user.role }, 
+  //       withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data.message);
+  //       localStorage.removeItem('token');
+  //       setIsAuthenticated(false);
+  //       setUser({});
+  //     })
+  //     .catch((error) => {
+  //       console.error('Logout failed:', error);
+  //     });
+  // };
+  
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        'http://localhost:8000/api/v1/user/logout',
+        {},
+        { withCredentials: true }
+      );
+  
+      setIsAuthenticated(false);
+      setUser({});
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
   
   

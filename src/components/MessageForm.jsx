@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
-// import  from "../App"
 import {Context } from '../main';
 
 const MessageForm = () => {
@@ -23,33 +22,30 @@ const MessageForm = () => {
 
   const handleSend = async (e) => {
     e.preventDefault();
-    try{
-      axios.post('http://localhost:8000/api/v1/message/send', {
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/message/send', {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
         message: formData.message
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+      }, {
+        withCredentials: true
       });
-      toast.success('Message sent successfully!');
-    }
-    catch(error){
-      console.log(error);
-    }
-    finally{
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        message: ''
-      });
+      
+      if (response.data.success) {
+        toast.success(response.data.message || 'Message sent successfully!');
+        setFormData({
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          phone: user?.phone || '',
+          message: ''
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
     }
   };
 
@@ -80,7 +76,7 @@ const MessageForm = () => {
                   <input
                     type="text"
                     name="firstName"
-                    value={user?.firstName}
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your first name"
@@ -94,7 +90,7 @@ const MessageForm = () => {
                   <input
                     type="text"
                     name="lastName"
-                    value={user?.lastName}
+                    value={formData.lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your last name"
@@ -111,7 +107,7 @@ const MessageForm = () => {
                   <input
                     type="email"
                     name="email"
-                    value={user?.email}
+                    value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your email"
@@ -125,7 +121,7 @@ const MessageForm = () => {
                   <input
                     type="tel"
                     name="phone"
-                    value={user?.phone}
+                    value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your phone number"

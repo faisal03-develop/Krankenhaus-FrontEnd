@@ -62,7 +62,6 @@ const AdminDashboard = () => {
 
   const handleUpdateStatus = async (appointmentId, status) => {
     try{
-      // Implement status update logic here // Replace with actual appointment ID
       await axios.put(`http://localhost:8000/api/v1/appointment/updateappointment/${appointmentId}`,
         {status},
         { withCredentials: true }
