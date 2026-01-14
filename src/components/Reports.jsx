@@ -9,8 +9,6 @@ const Reports = () => {
   const { user } = useContext(Context);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterDoctor, setFilterDoctor] = useState('');
   const [filterPatient, setFilterPatient] = useState('');
   const navigate = useNavigate();
 
@@ -69,22 +67,11 @@ const Reports = () => {
     reports.find(r => r.patientId?._id === id)?.patientId
   );
 
-  // Filter reports based on search and filters
+  // Filter reports based on filters
   const filteredReports = reports.filter(report => {
-    const matchesSearch = 
-      report.reportName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.diagnosis?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.patientId?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.patientId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.doctorId?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.doctorId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.doctorId?.doctorDepartment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.patientId?.email?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesDoctor = !filterDoctor || report.doctorId?._id === filterDoctor;
     const matchesPatient = !filterPatient || report.patientId?._id === filterPatient;
 
-    return matchesSearch && matchesDoctor && matchesPatient;
+    return matchesPatient;
   });
 
   const formatDate = (dateString) => {
@@ -103,7 +90,7 @@ const Reports = () => {
         return {
           title: 'Medical Reports',
           subtitle: 'View and manage all medical reports in the system',
-          showDoctorFilter: true,
+          showDoctorFilter: false,
           showPatientFilter: true,
           stats: [
             {
@@ -126,7 +113,7 @@ const Reports = () => {
             }
           ],
           tableColumns: ['Report Name', 'Patient', 'Doctor', 'Diagnosis', 'Created Date', 'Follow-up Date', 'Actions'],
-          emptyMessage: searchTerm || filterDoctor || filterPatient 
+          emptyMessage: filterPatient 
             ? 'Try adjusting your filters' 
             : 'No reports available in the system'
         };
@@ -162,15 +149,15 @@ const Reports = () => {
             }
           ],
           tableColumns: ['Report Name', 'Patient', 'Diagnosis', 'Generated Date', 'Follow-up Date', 'Actions'],
-          emptyMessage: searchTerm || filterPatient 
-            ? 'Try adjusting your search or filters' 
+          emptyMessage: filterPatient 
+            ? 'Try adjusting your filters' 
             : 'You haven\'t generated any reports yet'
         };
       case 'patient':
         return {
           title: 'My Medical Reports',
           subtitle: 'View all your medical reports and test results',
-          showDoctorFilter: true,
+          showDoctorFilter: false,
           showPatientFilter: false,
           stats: [
             {
@@ -198,9 +185,7 @@ const Reports = () => {
             }
           ],
           tableColumns: ['Report Name', 'Doctor', 'Department', 'Diagnosis', 'Report Date', 'Follow-up Date', 'Actions'],
-          emptyMessage: searchTerm || filterDoctor 
-            ? 'Try adjusting your search or filters' 
-            : 'You don\'t have any medical reports yet'
+          emptyMessage: 'You don\'t have any medical reports yet'
         };
       default:
         return null;
@@ -275,48 +260,10 @@ const Reports = () => {
           ))}
         </div>
 
-        {/* Filters and Search */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-          <div className={`grid grid-cols-1 ${config.showDoctorFilter && config.showPatientFilter ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
-            <div className={config.showDoctorFilter && config.showPatientFilter ? 'md:col-span-1' : ''}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {userRole === 'patient' ? 'Search Reports' : userRole === 'doctor' ? 'Search Reports' : 'Search'}
-              </label>
-              <input
-                type="text"
-                placeholder={
-                  userRole === 'patient' 
-                    ? 'Search by report name, diagnosis, or doctor...'
-                    : userRole === 'doctor'
-                    ? 'Search by report name, diagnosis, or patient...'
-                    : 'Search by report name, diagnosis, patient, or doctor...'
-                }
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            {config.showDoctorFilter && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Doctor</label>
-                <select
-                  value={filterDoctor}
-                  onChange={(e) => setFilterDoctor(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Doctors</option>
-                  {uniqueDoctors.map((doctor) => (
-                    <option key={doctor._id} value={doctor._id}>
-                      {userRole === 'patient' 
-                        ? `Dr. ${doctor.firstName} ${doctor.lastName} - ${doctor.doctorDepartment}`
-                        : `Dr. ${doctor.firstName} ${doctor.lastName}`
-                      }
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {config.showPatientFilter && (
+        {/* Filters */}
+        {config.showPatientFilter && (
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Patient</label>
                 <select
@@ -335,9 +282,9 @@ const Reports = () => {
                   ))}
                 </select>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Reports Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

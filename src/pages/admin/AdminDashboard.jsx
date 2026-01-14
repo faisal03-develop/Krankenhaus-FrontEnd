@@ -274,9 +274,15 @@ const AdminDashboard = () => {
                 >
                   View All Reports
                 </button>
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-sm font-medium">
-                  System Settings
+                <button 
+                  onClick={() => navigateTo('/admin/messages')} 
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-md text-sm font-medium"
+                >
+                  View Messages
                 </button>
+                {/* <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-sm font-medium">
+                  System Settings
+                </button> */}
               </div>
             </div>
           </div>

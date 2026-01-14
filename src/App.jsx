@@ -27,6 +27,7 @@ import NotFound from './pages/NotFound.jsx';
 import PatientAppointments from './pages/patient/Appointments.jsx';
 import AddNewAdmin from './pages/admin/addNewAdmin.jsx';
 import Reports from './components/Reports.jsx';
+import Messages from './pages/admin/messages.jsx';
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
@@ -146,6 +147,11 @@ const AppContent = () => {
           <Route path='/patient/reports' element={
             <ProtectedRoute requiredRole="patient">
               <Reports />
+            </ProtectedRoute>
+          } />
+          <Route path='/admin/messages' element={
+            <ProtectedRoute requiredRole="admin">
+              <Messages />
             </ProtectedRoute>
           } />
         </Routes>
