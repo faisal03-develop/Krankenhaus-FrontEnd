@@ -1,18 +1,18 @@
 
 import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom'
-import Home from './pages/Home.jsx'
-import Appointment from './pages/Appointment'
-import Register from './pages/Register'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Login from './pages/Login'
-import Navbar from './components/Navbar'
-import AdminNavbar from './components/AdminNavbar'
-import Footer from './components/Footer'
+import Home from './pages/landing-pages/home/index.jsx'
+import Appointment from './pages/patient/appointment/index.jsx'
+import Register from './pages/auth/register/index.jsx'
+import About from './pages/landing-pages/about/index.jsx'
+import Contact from './pages/landing-pages/contact/index.jsx'
+import Login from './pages/auth/login/index.jsx'
+import Navbar from './components/common/navbar/index.jsx'
+import AdminNavbar from './components/admin-components/admin-navbar/index.jsx'
+import Footer from './components/common/footer/index.jsx'
 import { ToastContainer } from 'react-toastify';
 import PatientDashboard from './pages/patient/PatientDashboard.jsx'
 import UpdatePatient from './pages/patient/UpdatePatient.jsx'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './components/common/protected-routes/index.jsx'
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx'
 import ReportGeneration from './pages/doctor/ReportGeneration.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
@@ -22,12 +22,13 @@ import axios from 'axios'
 import { useContext } from 'react'
 import { Context } from '../src/main.jsx'
 import AppointmentSchedule from './pages/doctor/AppointmentSchedule.jsx';
-import ReportView from './components/ReportView.jsx';
-import NotFound from './pages/NotFound.jsx';
+import ReportView from './pages/common/report-view/index';
+import NotFound from './pages/common/page-not-found/index.jsx';
 import PatientAppointments from './pages/patient/Appointments.jsx';
 import AddNewAdmin from './pages/admin/addNewAdmin.jsx';
-import Reports from './components/Reports.jsx';
+import Reports from './pages/common/reports/index.jsx';
 import Messages from './pages/admin/messages.jsx';
+// import apiClient from './helper/api/api-client.js'
 
 const AppContent = () => {
   const {  setIsAuthenticated, isAuthenticated, user, setUser, setLoading } = useContext(Context);
@@ -38,9 +39,11 @@ const AppContent = () => {
   const showAdminNavbar = isAdminRoute && user?.role === 'admin';
   const showFooter = !hideNavbarRoutes.includes(location.pathname) && !isAuthenticated;
   useEffect(() => {
+    
     const fetchUser = () =>{
-        axios
-      .get("http://localhost:8000/api/v1/user/me", { withCredentials: true })
+      axios
+      .get(`http://localhost:8000/api/v1/user/me`, { withCredentials: true })
+      // .get(`${import.meta.env.REACT_APP_BASE_URL}/user/me`, { withCredentials: true })
       .then((res) => {
         if (res?.data?.user) {
           setIsAuthenticated(true);
@@ -50,6 +53,7 @@ const AppContent = () => {
           setUser(null);
         }
         setLoading(false);
+        // console.log()
       })
       .catch(() => {
         setIsAuthenticated(false);

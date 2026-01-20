@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import apiClient from '../../helper/api/api-client'
 
 const AddNewAdmin = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,17 @@ const AddNewAdmin = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
+
+  // const handleSubmit = async () => {
+  //   try{
+  //     const response = await apiClient.post("/user/addnewadmin")
+  //     console.log(`New Admin added successfully: ${response.data}`)
+  //     setLoading(false)
+  //   }
+  //   catch(error){
+  //     toast.error(error.message)
+  //   }
+  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault()

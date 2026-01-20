@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Context } from '../main';
+import { Context } from '../../../main';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Skeleton from './Skeleton';
+import Skeleton from '../../../components/common/skeleton';
 
 const Reports = () => {
   const { user } = useContext(Context);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Context } from '../main';
+import { Context } from '../../../main';
 const NotFound = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = React.useContext(Context);

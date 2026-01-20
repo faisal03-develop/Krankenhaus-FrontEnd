@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Context } from '../main';
+import { Context } from '../../../main';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import apiClient from '../../../helper/api/api-client';
 
 const AdminNavbar = () => {
   const { isAuthenticated, setIsAuthenticated, user, setUser } = useContext(Context);
@@ -13,21 +14,36 @@ const AdminNavbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+
   const handleLogout = async () => {
-    try {
-      await axios.get('http://localhost:8000/api/v1/user/logout', {
-        params: { role: 'admin' },
-        withCredentials: true
-      });
-      toast.success('Logged out successfully');
-      setIsAuthenticated(false);
+    try{
+
+      const response = await apiClient.post('/user/logout')
+      if(!response.data.success) return toast.error(response.data.message)
+      setIsAuthenticated(false)
       setUser({});
-      navigate('/login', { replace: true });
-    } catch (error) {
-      console.error('Logout failed:', error);
-      toast.error('Logout failed');
+      navigate('/login',{replace:true})
+      }
+    catch(error){
+      toast.error(error?.response?.data?.message);
     }
-  };
+  }
+
+
+  // const handleLogout = async () => {
+  //   try {
+  //     await axios.post('http://localhost:8000/api/v1/user/logout', {
+  //       withCredentials: true
+  //     });
+  //     toast.success('Logged out successfully');
+  //     setIsAuthenticated(false);
+  //     setUser({});
+  //     navigate('/login', { replace: true });
+  //   } catch (error) {
+  //     console.error('Logout failed:', error);
+  //     toast.error('Logout failed');
+  //   }
+  // };
 
   return (
     <nav className="bg-white shadow-lg fixed w-full top-0 z-50">

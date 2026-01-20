@@ -1,4 +1,4 @@
-import Biography from '../components/BioGraphy';
+import Biography from '../../../components/landing-page-components/biograghy/index';
 
 const About = () => {
   return (

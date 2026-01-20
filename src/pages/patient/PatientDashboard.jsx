@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Skeleton from '../../components/Skeleton';
+import Skeleton from '../../components/common/skeleton';
 
 const PatientDashboard = () => {
   const { user } = useContext(Context);
