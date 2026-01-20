@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Context } from '../main';
+import { Context } from '../../../main';
 import axios from 'axios';
 
 const Navbar = () => {

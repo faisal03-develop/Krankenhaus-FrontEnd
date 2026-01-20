@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Context } from '../../main';
 import { toast } from 'react-toastify';
-import Skeleton from '../../components/Skeleton';
+import Skeleton from '../../components/common/skeleton';
 
 const Messages = () => {
   const { user } = useContext(Context);

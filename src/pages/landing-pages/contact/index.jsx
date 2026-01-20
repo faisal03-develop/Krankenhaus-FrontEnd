@@ -1,4 +1,4 @@
-import MessageForm from '../components/MessageForm';
+import MessageForm from '../../../components/patient-components/message-form/index';
 
 
 const Contact = () => {

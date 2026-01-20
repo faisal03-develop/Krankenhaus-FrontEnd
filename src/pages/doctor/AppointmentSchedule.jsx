@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../../main';
 import { toast } from 'react-toastify';
-import Skeleton from '../../components/Skeleton';
+import Skeleton from '../../components/common/skeleton';
 
 const AppointmentSchedule = () => {
   const { user } = useContext(Context);

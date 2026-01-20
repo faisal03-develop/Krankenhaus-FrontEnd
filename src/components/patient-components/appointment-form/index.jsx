@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState, useContext, useEffect } from 'react';
-import { Context } from '../main';
+import { Context } from '../../../main';
 import { toast } from 'react-toastify';
-import {isNotPastDate} from "../utils/date/dateUtils"
+import {isNotPastDate} from "../../../utils/date"
 
 const AppointmentForm = () => {
   const [department, setDepartment] = useState('dummy');

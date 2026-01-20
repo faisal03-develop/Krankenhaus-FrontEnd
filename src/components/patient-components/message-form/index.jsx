@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
-import {Context } from '../main';
+import {Context } from '../../../main';
 
 const MessageForm = () => {
   const { user } = useContext(Context);

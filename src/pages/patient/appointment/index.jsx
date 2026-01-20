@@ -1,5 +1,5 @@
 
-import AppointmentForm from '../components/AppointmentForm';
+import AppointmentForm from '../../../components/patient-components/appointment-form';
 
 
 const Appointment = () => {
